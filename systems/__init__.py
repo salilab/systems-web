@@ -38,7 +38,7 @@ class System(object):
             meta = os.path.join(app.config['SYSTEM_TOP'], self.name,
                                 'metadata.yaml')
             with open(meta) as fh:
-                self.__metadata = yaml.load(fh)
+                self.__metadata = yaml.safe_load(fh)
         return self.__metadata
     _metadata = property(_read_metadata)
 
