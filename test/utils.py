@@ -24,14 +24,15 @@ def set_search_paths(fname):
 
 class MockSystem(object):
     def __init__(self, name, repo, title, pmid, prereqs, description,
-                 homepage):
+                 homepage, tags):
         self.name, self.repo = name, repo
         self.title, self.pmid, self.prereqs = title, pmid, prereqs
         self.description, self.homepage = description, homepage
+        self.tags = tags
 
     def make_yaml(self, fname):
         data = {'title': self.title, 'pmid': self.pmid,
-                'prereqs': self.prereqs}
+                'prereqs': self.prereqs, 'tags': self.tags}
         with open(fname, 'w') as fh:
             yaml.dump(data, fh)
 

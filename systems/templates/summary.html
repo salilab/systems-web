@@ -22,9 +22,19 @@ works with is shown below (or see <a href="?p=full">all builds</a>).</p>
 <a href="//integrativemodeling.org/nightly/doc/manual/biosystem.html">IMP
 manual</a> for information on adding a new system to this page.</p>
 
+{% if only_tag is not none %}
+<p>All systems with the <b>{{ only_tag }}</b> tag are shown.
+[<a href="?">Show all systems</a>]
+</p>
+{% endif %}
+
 <div class="tags">
   <div class="tagdesc">Show only systems with tag</div>
-  <div class="taglist"></div>
+  <div class="taglist">
+    {% for tag in tags %}
+    <a class="tag" href="?tag={{ tag }}">{{ tag }}</a>
+    {% endfor %}
+  </div>
 </div>
 
 {% for system in systems %}
@@ -37,6 +47,11 @@ manual</a> for information on adding a new system to this page.</p>
     <p class="sysdesc">{{ system.description }}
       <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
     </p>
+    <div class="tags">Tags
+      {% for tag in system.tags|sort %}
+      <a class="tag" href="?tag={{ tag }}">{{ tag }}</a>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endfor %}

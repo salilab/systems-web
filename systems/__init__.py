@@ -3,7 +3,8 @@ import os
 import json
 import yaml
 import operator
-from flask import Flask, g, render_template
+import itertools
+from flask import Flask, g, render_template, request
 from .prerequisites import ALL_PREREQS
 
 app = Flask(__name__, instance_relative_config=True)
@@ -62,6 +63,7 @@ class System(object):
 
     pmid = property(lambda self: self._metadata.get('pmid'))
     title = property(lambda self: self._metadata['title'])
+    tags = property(lambda self: self._metadata.get('tags', []))
     homepage = property(lambda self: self._github['homepage'])
     description = property(lambda self: self._github['description'])
 
@@ -84,8 +86,15 @@ def get_all_systems():
 
 @app.route('/')
 def show_summary_page():
-    all_systems = sorted(get_all_systems(), key=operator.attrgetter('name'))
-    return render_template('summary.html', systems=all_systems)
+    only_tag = request.args.get('tag')
+    all_sys = get_all_systems()
+    tags = frozenset(itertools.chain.from_iterable(s.tags for s in all_sys))
+    if only_tag:
+        all_sys = [s for s in all_sys if only_tag in s.tags]
+    all_sys = sorted(all_sys, key=operator.attrgetter('name'))
+    return render_template('summary.html', systems=all_sys,
+                           tags=sorted(tags, key=lambda x: x.lower()),
+                           only_tag=only_tag)
 
 
 @app.route('/api/list')

@@ -5,7 +5,12 @@ import systems
 
 sys1 = utils.MockSystem(name="sys1", repo="repo1", title="sys1 title",
                         pmid="1234", prereqs=["modeller", "python/scikit"],
-                        description="sys1 desc", homepage="sys1 home")
+                        description="sys1 desc", homepage="sys1 home",
+                        tags=["foo", "bar"])
+sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
+                        pmid="5678", prereqs=["modeller", "python/scikit"],
+                        description="sys2 desc", homepage="sys2 home",
+                        tags=["foo", "baz"])
 
 
 def test_system_class():
@@ -19,11 +24,29 @@ def test_system_class():
         assert s.pmid == '1234'
         assert s.description == 'sys1 desc'
         assert s.homepage == 'sys1 home'
+        assert s.tags == ["foo", "bar"]
 
 
-def test_summary():
-    """Test the summary page"""
-    with utils.mock_systems(systems.app, [sys1]):
+def test_summary_all_tags():
+    """Test the summary page with all tags shown"""
+    with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/')
         assert '<a class="sysmore" href="sys1 home">[more...]</a>' in rv.data
+        assert '<a class="sysmore" href="sys2 home">[more...]</a>' in rv.data
+        assert '<a class="tag" href="?tag=foo">foo</a>' in rv.data
+        assert '<a class="tag" href="?tag=bar">bar</a>' in rv.data
+        assert '<a class="tag" href="?tag=baz">baz</a>' in rv.data
+
+
+def test_summary_only_tags():
+    """Test the summary page with only one tag shown"""
+    with utils.mock_systems(systems.app, [sys1, sys2]):
+        c = systems.app.test_client()
+        rv = c.get('/?tag=bar')
+        assert '<a class="sysmore" href="sys1 home">[more...]</a>' in rv.data
+        assert ('<a class="sysmore" href="sys2 home">[more...]</a>'
+                not in rv.data)
+        assert '<a class="tag" href="?tag=foo">foo</a>' in rv.data
+        assert '<a class="tag" href="?tag=bar">bar</a>' in rv.data
+        assert '<a class="tag" href="?tag=baz">baz</a>' in rv.data
