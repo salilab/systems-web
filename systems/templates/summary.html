@@ -44,7 +44,7 @@ manual</a> for information on adding a new system to this page.</p>
     <p class="systitle">
       <a href="{{ system.homepage }}">{{ system.title }}</a>
     </p>
-    <p class="sysdesc">{{ system.description }}
+    <p class="sysdesc">{{ system.description|striptags|replace('FRETR', 'FRET<sub>R</sub>')|safe }}
       <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
     </p>
     <div class="tags">Tags

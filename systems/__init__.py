@@ -51,9 +51,6 @@ class System(object):
                               'github.json')
             with open(gh) as fh:
                 j = json.load(fh)
-            # Add markup where appropriate
-            j['description'] = j['description'].replace(' FRETR ',
-                                                        ' FRET<sub>R</sub> ')
             # Workaround broken repo info
             if self.name == 'fly_genome':
                 j['homepage'] = \
