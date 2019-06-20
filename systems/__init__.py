@@ -2,7 +2,7 @@ import MySQLdb
 import os
 import json
 import yaml
-from flask import Flask, g
+from flask import Flask, g, render_template
 from .prerequisites import ALL_PREREQS
 
 app = Flask(__name__, instance_relative_config=True)
@@ -77,6 +77,11 @@ def get_all_systems():
     c = conn.cursor()
     c.execute('SELECT name, repo FROM sys_name')
     return [System(*x) for x in c]
+
+
+@app.route('/')
+def show_summary_page():
+    return render_template('summary.html')
 
 
 @app.route('/api/list')
