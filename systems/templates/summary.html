@@ -31,7 +31,7 @@ manual</a> for information on adding a new system to this page.</p>
 <div class="tags">
   <div class="tagdesc">Show only systems with tag</div>
   <div class="taglist">
-    {% for tag in tags %}
+    {% for tag in tags -%}
     <a class="tag" href="?tag={{ tag }}">{{ tag }}</a>
     {% endfor %}
   </div>
@@ -48,7 +48,7 @@ manual</a> for information on adding a new system to this page.</p>
       <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
     </p>
     <div class="tags">Tags
-      {% for tag in system.tags|sort %}
+      {% for tag in system.tags|sort -%}
       <a class="tag" href="?tag={{ tag }}">{{ tag }}</a>
       {% endfor %}
     </div>
