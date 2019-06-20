@@ -5,8 +5,8 @@ python:
 cache:
   pip: true
 install:
-  - pip install flask pytest-cov pyyaml
+  - pip install flask pytest-cov pytest-pep8 pyyaml
 script:
-  - py.test --cov=systems --cov-branch
+  - py.test --cov=systems --cov-branch --pep8
 after_success:
   - bash <(curl -s https://codecov.io/bash)
