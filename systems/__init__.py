@@ -2,6 +2,7 @@ import MySQLdb
 import os
 import json
 import yaml
+import operator
 from flask import Flask, g, render_template
 from .prerequisites import ALL_PREREQS
 
@@ -60,7 +61,9 @@ class System(object):
     _github = property(_read_github)
 
     pmid = property(lambda self: self._metadata.get('pmid'))
+    title = property(lambda self: self._metadata['title'])
     homepage = property(lambda self: self._github['homepage'])
+    description = property(lambda self: self._github['description'])
 
     def __get_conda_prereqs(self):
         reqs = []
@@ -81,7 +84,8 @@ def get_all_systems():
 
 @app.route('/')
 def show_summary_page():
-    return render_template('summary.html')
+    all_systems = sorted(get_all_systems(), key=operator.attrgetter('name'))
+    return render_template('summary.html', systems=all_systems)
 
 
 @app.route('/api/list')

@@ -27,4 +27,18 @@ manual</a> for information on adding a new system to this page.</p>
   <div class="taglist"></div>
 </div>
 
+{% for system in systems %}
+<div class="system_summary">
+  <div class="thumb"></div>
+  <div class="systext">
+    <p class="systitle">
+      <a href="{{ system.homepage }}">{{ system.title }}</a>
+    </p>
+    <p class="sysdesc">{{ system.description }}
+      <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
+    </p>
+  </div>
+</div>
+{% endfor %}
+
 {% endblock %}
