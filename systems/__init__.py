@@ -34,17 +34,18 @@ class System(object):
     def __init__(self, name, repo):
         self.name, self.repo = name, repo
 
-    def _read_metadata(self):
-        if not hasattr(self, '__metadata'):
+    @property
+    def _metadata(self):
+        if not hasattr(self, '_metadata_internal'):
             meta = os.path.join(app.config['SYSTEM_TOP'], self.name,
                                 'metadata.yaml')
             with open(meta) as fh:
-                self.__metadata = yaml.safe_load(fh)
-        return self.__metadata
-    _metadata = property(_read_metadata)
+                self._metadata_internal = yaml.safe_load(fh)
+        return self._metadata_internal
 
-    def _read_github(self):
-        if not hasattr(self, '__github'):
+    @property
+    def _github(self):
+        if not hasattr(self, '_github_internal'):
             gh = os.path.join(app.config['SYSTEM_TOP'], self.name,
                               'github.json')
             with open(gh) as fh:
@@ -56,9 +57,8 @@ class System(object):
             if self.name == 'fly_genome':
                 j['homepage'] = \
                     'https://integrativemodeling.org/systems/?sys=22'
-            self.__github = j
-        return self.__github
-    _github = property(_read_github)
+            self._github_internal = j
+        return self._github_internal
 
     pmid = property(lambda self: self._metadata.get('pmid'))
     title = property(lambda self: self._metadata['title'])
