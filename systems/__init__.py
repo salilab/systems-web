@@ -45,6 +45,35 @@ class System(object):
         return self._metadata_internal
 
     @property
+    def _pubmed(self):
+        if not hasattr(self, '_pubmed_internal'):
+            pubmed = os.path.join(app.config['SYSTEM_TOP'], self.name,
+                                  'pubmed.json')
+            if os.path.exists(pubmed):
+                with open(pubmed) as fh:
+                    self._pubmed_internal = json.load(fh)
+            else:
+                self._pubmed_internal = None
+        return self._pubmed_internal
+
+    @property
+    def pubmed_title(self):
+        p = self._pubmed
+        if p:
+            pmid = p['result']['uids'][0]
+            ref = p['result'][pmid]
+
+            authors = [x['name'] for x in ref['authors']
+                       if x['authtype'] == 'Author']
+            if len(authors) > 2:
+                citation = ', '.join(authors[:2]) + ' et al.'
+            else:
+                citation = ', '.join(authors) + '.'
+
+            return citation + ' %s %s, %s' % (ref['source'], ref['volume'],
+                                              ref['pubdate'].split()[0])
+
+    @property
     def _github(self):
         if not hasattr(self, '_github_internal'):
             gh = os.path.join(app.config['SYSTEM_TOP'], self.name,

@@ -24,11 +24,13 @@ def set_search_paths(fname):
 
 class MockSystem(object):
     def __init__(self, name, repo, title, pmid, prereqs, description,
-                 homepage, tags):
+                 homepage, tags, authors, journal, volume, pubdate):
         self.name, self.repo = name, repo
         self.title, self.pmid, self.prereqs = title, pmid, prereqs
         self.description, self.homepage = description, homepage
         self.tags = tags
+        self.authors, self.journal, self.pubdate = authors, journal, pubdate
+        self.volume = volume
 
     def make_yaml(self, fname):
         data = {'title': self.title, 'pmid': self.pmid,
@@ -38,6 +40,15 @@ class MockSystem(object):
 
     def make_json(self, fname):
         data = {'description': self.description, 'homepage': self.homepage}
+        with open(fname, 'w') as fh:
+            json.dump(data, fh)
+
+    def make_pubmed(self, fname):
+        authors = [{'name': name, 'authtype': 'Author'}
+                   for name in self.authors]
+        pub = {'pubdate': self.pubdate, 'source': self.journal,
+               'authors': authors, 'volume': self.volume}
+        data = {'result': {"uids": [self.pmid], self.pmid: pub}}
         with open(fname, 'w') as fh:
             json.dump(data, fh)
 
@@ -60,6 +71,7 @@ def mock_systems(app, systems):
         os.mkdir(os.path.join(systop, s.name))
         s.make_yaml(os.path.join(systop, s.name, 'metadata.yaml'))
         s.make_json(os.path.join(systop, s.name, 'github.json'))
+        s.make_pubmed(os.path.join(systop, s.name, 'pubmed.json'))
     app.config['DATABASE'] = dbsetup
     app.config['SYSTEM_TOP'] = systop
     yield

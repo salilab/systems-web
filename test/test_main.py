@@ -6,11 +6,14 @@ import systems
 sys1 = utils.MockSystem(name="sys1", repo="repo1", title="sys1 title",
                         pmid="1234", prereqs=["modeller", "python/scikit"],
                         description="sys1 desc", homepage="sys1 home",
-                        tags=["foo", "bar"])
+                        tags=["foo", "bar"], authors=["Smith J"],
+                        journal="Nature", volume="99", pubdate="2014 Dec")
 sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
                         pmid="5678", prereqs=["modeller", "python/scikit"],
                         description="sys2 desc", homepage="sys2 home",
-                        tags=["foo", "baz"])
+                        tags=["foo", "baz"],
+                        authors=["Smith J", "Jones A", "Jones B"],
+                        journal="Nature", volume="99", pubdate="2014 Dec")
 
 
 def test_system_class():
@@ -25,6 +28,7 @@ def test_system_class():
         assert s.description == 'sys1 desc'
         assert s.homepage == 'sys1 home'
         assert s.tags == ["foo", "bar"]
+        assert s.pubmed_title == 'Smith J. Nature 99, 2014'
 
 
 def test_summary_all_tags():

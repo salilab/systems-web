@@ -43,6 +43,13 @@ manual</a> for information on adding a new system to this page.</p>
   <div class="systext">
     <p class="systitle">
       <a href="{{ system.homepage }}">{{ system.title }}</a>
+      {% if system.pmid %}
+      <a class="pubmed" title="{{ system.pubmed_title }}"
+       href="https://www.ncbi.nlm.nih.gov/pubmed/{{ system.pmid }}">
+        <img src="//integrativemodeling.org/systems/images/pubmed.png"
+         alt="PubMed logo">
+      </a>
+      {% endif %}
     </p>
     <p class="sysdesc">{{ system.description|striptags|replace('FRETR', 'FRET<sub>R</sub>')|safe }}
       <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
