@@ -14,6 +14,12 @@ sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
                         tags=["foo", "baz"],
                         authors=["Smith J", "Jones A", "Jones B"],
                         journal="Nature", volume="99", pubdate="2014 Dec")
+sys2.add_build('master', 1, imp_date="2019-06-15", imp_version="2.11.0",
+               imp_githash="2a", retcode=0)
+sys2.add_build('develop', 2, imp_date="2019-06-15", imp_version=None,
+               imp_githash="3a", retcode=0)
+sys2.add_build('develop', 3, imp_date="2019-07-15", imp_version=None,
+               imp_githash="4a", retcode=1)
 
 
 def test_system_class():

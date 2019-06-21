@@ -31,9 +31,19 @@ def close_db(error):
         g.db_conn.close()
 
 
+class Build(object):
+    def __init__(self, build_id, imp_branch, imp_date, imp_version,
+                 imp_githash, retcode):
+        self.build_id, self.imp_branch = build_id, imp_branch
+        self.imp_date, self.imp_version = imp_date, imp_version
+        self.imp_githash, self.retcode = imp_githash, retcode
+
+
 class System(object):
-    def __init__(self, name, repo):
-        self.name, self.repo = name, repo
+    def __init__(self, id, name, repo):
+        self.id, self.name, self.repo = id, name, repo
+        # Use add_all_builds() to fill in
+        self.builds = {'master': [], 'develop': []}
 
     @property
     def _metadata(self):
@@ -104,10 +114,30 @@ class System(object):
 
 
 def get_all_systems():
+    """Get a list of all systems, as System objects"""
     conn = get_db()
     c = conn.cursor()
-    c.execute('SELECT name, repo FROM sys_name')
+    c.execute('SELECT id, name, repo FROM sys_name')
     return [System(*x) for x in c]
+
+
+def add_all_builds(systems):
+    """Add build information to the given list of System objects"""
+    sys_by_id = dict((s.id, s) for s in systems)
+    conn = get_db()
+    c = MySQLdb.cursors.DictCursor(conn)
+    c.execute('SELECT sys_name.id sys_id,sys_build.id build_id,imp_branch,'
+              'imp_date,imp_version,imp_githash,retcode FROM '
+              'sys_test,sys_name,sys_build WHERE sys_name.id=sys_test.sys '
+              'AND sys_build.id=sys_test.build ORDER BY imp_date')
+    for row in c:
+        s = sys_by_id.get(row['sys_id'])
+        if s:
+            build = Build(
+                build_id=row['build_id'], imp_branch=row['imp_branch'],
+                imp_date=row['imp_date'], imp_version=row['imp_version'],
+                imp_githash=row['imp_githash'], retcode=row['retcode'])
+            s.builds[row['imp_branch']].append(build)
 
 
 @app.route('/')
@@ -117,6 +147,7 @@ def show_summary_page():
     tags = frozenset(itertools.chain.from_iterable(s.tags for s in all_sys))
     if only_tag:
         all_sys = [s for s in all_sys if only_tag in s.tags]
+    add_all_builds(all_sys)
     all_sys = sorted(all_sys, key=operator.attrgetter('name'))
     return render_template('summary.html', systems=all_sys,
                            tags=sorted(tags, key=lambda x: x.lower()),

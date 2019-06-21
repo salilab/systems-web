@@ -31,6 +31,14 @@ class MockSystem(object):
         self.tags = tags
         self.authors, self.journal, self.pubdate = authors, journal, pubdate
         self.volume = volume
+        self.builds = {'master': [], 'develop': []}
+
+    def add_build(self, branch, build_id, imp_date, imp_version,
+                  imp_githash, retcode):
+        build = {'id': build_id, 'imp_date': imp_date,
+                 'imp_version': imp_version, 'imp_githash': imp_githash,
+                 'retcode': retcode}
+        self.builds[branch].append(build)
 
     def make_yaml(self, fname):
         data = {'title': self.title, 'pmid': self.pmid,
@@ -52,10 +60,19 @@ class MockSystem(object):
         with open(fname, 'w') as fh:
             json.dump(data, fh)
 
-    def __get_sql(self):
-        return ('insert into sys_name (name, repo) values ("%s", "%s")'
-                % (self.name, self.repo))
-    sql = property(__get_sql)
+    def get_sql(self, id):
+        yield ('insert into sys_name (id, name, repo) values (%d, "%s", "%s")'
+               % (id, self.name, self.repo))
+        for branch, builds in self.builds.items():
+            for build in builds:
+                yield ('insert into sys_build (id, imp_date, imp_githash, '
+                       'imp_version, imp_branch) values (%d, "%s", "%s", '
+                       '"%s", "%s")'
+                       % (build['id'], build['imp_date'],
+                          build['imp_githash'], build['imp_version'], branch))
+                yield ('insert into sys_test (build, sys, retcode) values '
+                       '(%d, %d, %d)'
+                       % (build['id'], id, build['retcode']))
 
 
 @contextlib.contextmanager
@@ -65,9 +82,15 @@ def mock_systems(app, systems):
     app.config['HOST'] = 'localhost'
     app.config['USER'] = 'testuser'
     app.config['PASSWORD'] = 'testpwd'
-    dbsetup = ['create table sys_name (name text, repo text)']
-    for s in systems:
-        dbsetup.append(s.sql)
+    dbsetup = ['create table sys_name (id int primary key, '
+               'name text, repo text)',
+               'create table sys_test (build int, sys int, name int, '
+               'retcode int, stderr text, runtime int)',
+               'create table sys_build (id int primary key, imp_date text, '
+               'imp_githash text, imp_version text, imp_branch text, '
+               'modeller_version text)']
+    for i, s in enumerate(systems):
+        dbsetup.extend(s.get_sql(i))
         os.mkdir(os.path.join(systop, s.name))
         s.make_yaml(os.path.join(systop, s.name, 'metadata.yaml'))
         s.make_json(os.path.join(systop, s.name, 'github.json'))

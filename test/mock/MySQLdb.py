@@ -4,9 +4,9 @@ import sqlite3
 
 
 class MockCursor(object):
-    def __init__(self, sql, db):
-        self.sql, self.db = sql, db
-        self.dbcursor = db.cursor()
+    def __init__(self, conn):
+        self.sql, self.db = conn.sql, conn.db
+        self.dbcursor = self.db.cursor()
 
     def execute(self, statement):
         self.sql.append(statement)
@@ -16,6 +16,17 @@ class MockCursor(object):
     def __iter__(self):
         fa = self.dbcursor.fetchall()
         return fa.__iter__()
+
+
+class DictCursor(MockCursor):
+    def __init__(self, conn):
+        self._oldrf = conn.db.row_factory
+        conn.db.row_factory = sqlite3.Row
+        super(DictCursor, self).__init__(conn)
+
+    def __del__(self):
+        if hasattr(self, 'db'):
+            self.db.row_factory = self._oldrf
 
 
 class MockConnection(object):
@@ -31,7 +42,7 @@ class MockConnection(object):
             c.execute(d)
 
     def cursor(self):
-        return MockCursor(self.sql, self.db)
+        return MockCursor(self)
 
     def close(self):
         self.db.close()
@@ -39,3 +50,11 @@ class MockConnection(object):
 
 def connect(*args, **keys):
     return MockConnection(*args, **keys)
+
+
+# Mock for 'MySQLdb.cursors.DictCursor'
+class cursors(object):
+    pass
+
+
+cursors.DictCursor = DictCursor
