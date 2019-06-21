@@ -24,13 +24,15 @@ def set_search_paths(fname):
 
 class MockSystem(object):
     def __init__(self, name, repo, title, pmid, prereqs, description,
-                 homepage, tags, authors, journal, volume, pubdate):
+                 homepage, tags, authors, journal, volume, pubdate,
+                 has_thumbnail=False):
         self.name, self.repo = name, repo
         self.title, self.pmid, self.prereqs = title, pmid, prereqs
         self.description, self.homepage = description, homepage
         self.tags = tags
         self.authors, self.journal, self.pubdate = authors, journal, pubdate
         self.volume = volume
+        self.has_thumbnail = has_thumbnail
         self.builds = {'master': [], 'develop': []}
 
     def add_build(self, branch, build_id, imp_date, imp_version,
@@ -59,6 +61,11 @@ class MockSystem(object):
         data = {'result': {"uids": [self.pmid], self.pmid: pub}}
         with open(fname, 'w') as fh:
             json.dump(data, fh)
+
+    def make_thumbnail(self, fname):
+        if self.has_thumbnail:
+            with open(fname, 'w') as fh:
+                pass  # dummy empty image
 
     def get_sql(self, id):
         yield ('insert into sys_name (id, name, repo) values (%d, "%s", "%s")'
@@ -95,6 +102,7 @@ def mock_systems(app, systems):
         s.make_yaml(os.path.join(systop, s.name, 'metadata.yaml'))
         s.make_json(os.path.join(systop, s.name, 'github.json'))
         s.make_pubmed(os.path.join(systop, s.name, 'pubmed.json'))
+        s.make_thumbnail(os.path.join(systop, s.name, 'thumb.png'))
     app.config['DATABASE'] = dbsetup
     app.config['SYSTEM_TOP'] = systop
     yield

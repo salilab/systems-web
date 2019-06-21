@@ -13,7 +13,8 @@ sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
                         description="sys2 desc", homepage="sys2 home",
                         tags=["foo", "baz"],
                         authors=["Smith J", "Jones A", "Jones B"],
-                        journal="Nature", volume="99", pubdate="2014 Dec")
+                        journal="Nature", volume="99", pubdate="2014 Dec",
+                        has_thumbnail=True)
 sys2.add_build('master', 1, imp_date="2019-06-15", imp_version="2.11.0",
                imp_githash="2a", retcode=0)
 sys2.add_build('develop', 2, imp_date="2019-06-15", imp_version=None,
@@ -47,6 +48,8 @@ def test_summary_all_tags():
         assert '<a class="tag" href="?tag=foo">foo</a>' in rv.data
         assert '<a class="tag" href="?tag=bar">bar</a>' in rv.data
         assert '<a class="tag" href="?tag=baz">baz</a>' in rv.data
+        assert ('<img src="//integrativemodeling.org/systems/sys2/thumb.png"'
+                in rv.data)
 
 
 def test_summary_only_tags():

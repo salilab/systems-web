@@ -39,7 +39,14 @@ manual</a> for information on adding a new system to this page.</p>
 
 {% for system in systems %}
 <div class="system_summary">
-  <div class="thumb"></div>
+  {%- if system.has_thumbnail() %}
+  <div class="thumb">
+    <a href="{{ system.homepage }}">
+      <img src="//integrativemodeling.org/systems/{{ system.name }}/thumb.png"
+       alt="thumbnail">
+    </a>
+  </div>
+  {%- endif %}
   <div class="systext">
     <p class="systitle">
       <a href="{{ system.homepage }}">{{ system.title }}</a>

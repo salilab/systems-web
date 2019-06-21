@@ -97,6 +97,11 @@ class System(object):
             self._github_internal = j
         return self._github_internal
 
+    def has_thumbnail(self):
+        """Return True iff a thumbnail for this system exists"""
+        thumb = os.path.join(app.config['SYSTEM_TOP'], self.name, 'thumb.png')
+        return os.path.exists(thumb)
+
     pmid = property(lambda self: self._metadata.get('pmid'))
     title = property(lambda self: self._metadata['title'])
     tags = property(lambda self: self._metadata.get('tags', []))
