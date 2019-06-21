@@ -46,6 +46,11 @@ class System(object):
         self.builds = {'master': [], 'develop': []}
 
     @property
+    def last_builds(self):
+        return dict((branch, builds[-1])
+                    for (branch, builds) in self.builds.items() if builds)
+
+    @property
     def _metadata(self):
         if not hasattr(self, '_metadata_internal'):
             meta = os.path.join(app.config['SYSTEM_TOP'], self.name,
@@ -154,7 +159,10 @@ def show_summary_page():
         all_sys = [s for s in all_sys if only_tag in s.tags]
     add_all_builds(all_sys)
     all_sys = sorted(all_sys, key=operator.attrgetter('name'))
-    return render_template('summary.html', systems=all_sys,
+    tested_sys = [s for s in all_sys if s.last_builds]
+    develop_sys = [s for s in all_sys if not s.last_builds]
+    return render_template('summary.html', tested_systems=tested_sys,
+                           develop_systems=develop_sys,
                            tags=sorted(tags, key=lambda x: x.lower()),
                            only_tag=only_tag)
 

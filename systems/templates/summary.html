@@ -1,5 +1,66 @@
 {% extends "layout.html" %}
 
+{% set branch_labels = {'master': 'stable release',
+                        'develop': 'nightly build'} %}
+
+{%- macro get_build_link(build) %}
+  {%- if build.imp_version -%}
+    <a href="" title="IMP build on {{ build.imp_date }}">{{ build.imp_version }}
+    </a>
+  {%- else -%}
+    <a href="" title="IMP nightly build">{{ build.imp_date }}</a>
+  {%- endif %}
+{%- endmacro %}
+
+{%- macro show_systems(systems) %}
+{% for system in systems %}
+<div class="system_summary">
+  {%- if system.has_thumbnail() %}
+  <div class="thumb">
+    <a href="{{ system.homepage }}">
+      <img src="//integrativemodeling.org/systems/{{ system.name }}/thumb.png"
+       alt="thumbnail">
+    </a>
+  </div>
+  {%- endif %}
+  <div class="systext">
+    <p class="systitle">
+      <a href="{{ system.homepage }}">{{ system.title }}</a>
+      {% if system.pmid %}
+      <a class="pubmed" title="{{ system.pubmed_title }}"
+       href="https://www.ncbi.nlm.nih.gov/pubmed/{{ system.pmid }}">
+        <img src="//integrativemodeling.org/systems/images/pubmed.png"
+         alt="PubMed logo">
+      </a>
+      {% endif %}
+    </p>
+    <p class="sysdesc">{{ system.description|striptags|replace('FRETR', 'FRET<sub>R</sub>')|safe }}
+      <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
+    </p>
+
+    {%- for branch, build in system.last_builds|dictsort %}
+    <div class="last_build">
+      Last worked with IMP <b>{{ branch_labels[branch] }}</b>
+      ({{ branch }} branch):
+      {%- if build.retcode == 0 %}
+        {{ get_build_link(build)}}
+      {%- else %}
+         <span class="build_fail">never</span>
+         (most recent failure: {{ get_build_link(build) }})
+      {%- endif %}
+    </div>
+    {%- endfor %}
+
+    <div class="tags">Tags
+      {%- for tag in system.tags|sort %}
+      <a class="tag" href="?tag={{ tag }}">{{ tag }}</a>
+      {%- endfor %}
+    </div>
+  </div>
+</div>
+{% endfor %}
+{%- endmacro %}
+
 {% block title %}Summary{% endblock %}
 
 {% block body %}
@@ -31,43 +92,22 @@ manual</a> for information on adding a new system to this page.</p>
 <div class="tags">
   <div class="tagdesc">Show only systems with tag</div>
   <div class="taglist">
-    {% for tag in tags -%}
+    {%- for tag in tags %}
     <a class="tag" href="?tag={{ tag }}">{{ tag }}</a>
-    {% endfor %}
+    {%- endfor %}
   </div>
 </div>
 
-{% for system in systems %}
-<div class="system_summary">
-  {%- if system.has_thumbnail() %}
-  <div class="thumb">
-    <a href="{{ system.homepage }}">
-      <img src="//integrativemodeling.org/systems/{{ system.name }}/thumb.png"
-       alt="thumbnail">
-    </a>
-  </div>
-  {%- endif %}
-  <div class="systext">
-    <p class="systitle">
-      <a href="{{ system.homepage }}">{{ system.title }}</a>
-      {% if system.pmid %}
-      <a class="pubmed" title="{{ system.pubmed_title }}"
-       href="https://www.ncbi.nlm.nih.gov/pubmed/{{ system.pmid }}">
-        <img src="//integrativemodeling.org/systems/images/pubmed.png"
-         alt="PubMed logo">
-      </a>
-      {% endif %}
-    </p>
-    <p class="sysdesc">{{ system.description|striptags|replace('FRETR', 'FRET<sub>R</sub>')|safe }}
-      <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
-    </p>
-    <div class="tags">Tags
-      {% for tag in system.tags|sort -%}
-      <a class="tag" href="?tag={{ tag }}">{{ tag }}</a>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-{% endfor %}
+{{ show_systems(tested_systems) }}
+
+{% if develop_systems|length > 0 %}
+<p>
+  <img class="buildstat"
+   src="//integrativemodeling.org/systems/images/warning.png" alt="warning">
+  The following systems are still under development and have not yet
+  been tested against the public release of IMP:
+</p>
+{{ show_systems(develop_systems) }}
+{% endif %}
 
 {% endblock %}
