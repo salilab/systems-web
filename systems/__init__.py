@@ -32,9 +32,9 @@ def close_db(error):
 
 
 class Build(object):
-    def __init__(self, build_id, imp_branch, imp_date, imp_version,
+    def __init__(self, id, imp_branch, imp_date, imp_version,
                  imp_githash, retcode):
-        self.build_id, self.imp_branch = build_id, imp_branch
+        self.id, self.imp_branch = id, imp_branch
         self.imp_date, self.imp_version = imp_date, imp_version
         self.imp_githash, self.retcode = imp_githash, retcode
 
@@ -144,7 +144,7 @@ def add_all_builds(systems):
         s = sys_by_id.get(row['sys_id'])
         if s:
             build = Build(
-                build_id=row['build_id'], imp_branch=row['imp_branch'],
+                id=row['build_id'], imp_branch=row['imp_branch'],
                 imp_date=row['imp_date'], imp_version=row['imp_version'],
                 imp_githash=row['imp_githash'], retcode=row['retcode'])
             s.builds[row['imp_branch']].append(build)
