@@ -8,7 +8,8 @@ sys1 = utils.MockSystem(name="sys1", repo="repo1", title="sys1 title",
                         pmid="1234", prereqs=["modeller", "python/scikit"],
                         description="sys1 desc", homepage="sys1 home",
                         tags=["foo", "bar"], authors=["Smith J"],
-                        journal="Nature", volume="99", pubdate="2014 Dec")
+                        journal="Nature", volume="99", pubdate="2014 Dec",
+                        accessions=[])
 
 
 class Tests(object):

@@ -112,6 +112,9 @@ class System(object):
     tags = property(lambda self: self._metadata.get('tags', []))
     homepage = property(lambda self: self._github['homepage'])
     description = property(lambda self: self._github['description'])
+    accessions = property(lambda self: self._metadata.get('accessions', []))
+    pdbdev_accessions = property(lambda self: [x for x in self.accessions
+                                               if x.startswith('PDBDEV')])
 
     def __get_conda_prereqs(self):
         reqs = []

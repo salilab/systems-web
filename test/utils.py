@@ -25,13 +25,14 @@ def set_search_paths(fname):
 class MockSystem(object):
     def __init__(self, name, repo, title, pmid, prereqs, description,
                  homepage, tags, authors, journal, volume, pubdate,
-                 has_thumbnail=False):
+                 accessions, has_thumbnail=False):
         self.name, self.repo = name, repo
         self.title, self.pmid, self.prereqs = title, pmid, prereqs
         self.description, self.homepage = description, homepage
         self.tags = tags
         self.authors, self.journal, self.pubdate = authors, journal, pubdate
         self.volume = volume
+        self.accessions = accessions
         self.has_thumbnail = has_thumbnail
         self.builds = {'master': [], 'develop': []}
 
@@ -44,7 +45,8 @@ class MockSystem(object):
 
     def make_yaml(self, fname):
         data = {'title': self.title, 'pmid': self.pmid,
-                'prereqs': self.prereqs, 'tags': self.tags}
+                'prereqs': self.prereqs, 'tags': self.tags,
+                'accessions': self.accessions}
         with open(fname, 'w') as fh:
             yaml.dump(data, fh)
 
