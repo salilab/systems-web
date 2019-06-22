@@ -1,22 +1,6 @@
 {% extends "layout.html" %}
 
-{% set branch_labels = {'master': 'stable release',
-                        'develop': 'nightly build'} %}
-
-{%- macro get_build_dest(build, system) -%}
-  ?build={{ build.id }}&amp;sys={{ system.id }}
-{%- endmacro -%}
-
-{%- macro get_build_link(build, system) %}
-  {%- if build.imp_version -%}
-    <a href="{{ get_build_dest(build, system) }}"
-       title="IMP build on {{ build.imp_date }}">{{ build.imp_version }}
-    </a>
-  {%- else -%}
-    <a href="{{ get_build_dest(build, system) }}"
-       title="IMP nightly build">{{ build.imp_date }}</a>
-  {%- endif %}
-{%- endmacro %}
+{% from "macros.html" import branch_labels, get_build_link %}
 
 {%- macro show_systems(systems) %}
 {% for system in systems %}
@@ -47,15 +31,15 @@
       <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
     </p>
 
-    {%- for branch, build in system.last_builds|dictsort %}
+    {%- for branch, test in system.last_tests|dictsort %}
     <div class="last_build">
       Last worked with IMP <b>{{ branch_labels[branch] }}</b>
       ({{ branch }} branch):
-      {%- if build.retcode == 0 %}
-        {{ get_build_link(build, system)}}
+      {%- if test.retcode == 0 %}
+        {{ get_build_link(test.build, system)}}
       {%- else %}
          <span class="build_fail">never</span>
-         (most recent failure: {{ get_build_link(build, system) }})
+         (most recent failure: {{ get_build_link(test.build, system) }})
       {%- endif %}
     </div>
     {%- endfor %}

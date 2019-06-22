@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% from "macros.html" import branch_labels, get_build_dest, get_build_text %}
+
+{%- macro show_test(test, system) %}
+  {%- if test %}
+    {%- if test.retcode == 0 %}
+    <a class="buildbox build_ok" title="Build OK"
+     href="{{ get_build_dest(test.build, system) }}">&nbsp;</a>
+    {%- else %}
+    <a class="buildbox build_fail" title="Build failed"
+     href="{{ get_build_dest(test.build, system) }}">&nbsp;</a>
+    {% endif %}
+  {%- else %}
+  none
+  {%- endif %}
+{%- endmacro %}
+
+{% block title %}All builds{% endblock %}
+
+{% block body %}
+
+{% for branch, builds in builds|dictsort %}
+<div class="branch_summary">
+  <p>
+    <a href="https://github.com/salilab/imp/tree/{{ branch }}">IMP {{ branch_labels[branch] }} ({{ branch }} branch)</a>
+  </p>
+
+  <table class="allbuilds">
+  <thead>
+    <tr>
+      <th>Build</th>
+      {%- for system in systems %}
+      <th><a href="{{ system.homepage }}">{{ system.name }}</a></th>
+      {%- endfor %}
+    </tr>
+  </thead>
+
+  <tbody>
+  </tbody>
+  {% for build in builds %}
+    <tr>
+      <td class="builddate" title="">{{ get_build_text(build) }}</td>
+    {% for system in systems %}
+      <td>{{ show_test(tests.get((build.id, system.id)), system) }}</td>
+    {% endfor %}
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+{% endfor %}
+
+{% endblock %}

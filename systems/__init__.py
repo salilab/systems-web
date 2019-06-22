@@ -7,6 +7,9 @@ import itertools
 from flask import Flask, g, render_template, request
 from .prerequisites import ALL_PREREQS
 
+
+ALL_BRANCHES = ['master', 'develop']
+
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('systems.cfg')
 
@@ -31,24 +34,31 @@ def close_db(error):
         g.db_conn.close()
 
 
+class Test(object):
+    """The result of testing one System as part of a Build"""
+    def __init__(self, build, retcode):
+        self.build, self.retcode = build, retcode
+
+
 class Build(object):
+    """A run over all Systems with a given configuration"""
     def __init__(self, id, imp_branch, imp_date, imp_version,
-                 imp_githash, retcode):
+                 imp_githash):
         self.id, self.imp_branch = id, imp_branch
         self.imp_date, self.imp_version = imp_date, imp_version
-        self.imp_githash, self.retcode = imp_githash, retcode
+        self.imp_githash = imp_githash
 
 
 class System(object):
     def __init__(self, id, name, repo):
         self.id, self.name, self.repo = id, name, repo
-        # Use add_all_builds() to fill in
-        self.builds = {'master': [], 'develop': []}
+        # Use add_all_tests() to fill in
+        self.tests = dict((branch, []) for branch in ALL_BRANCHES)
 
     @property
-    def last_builds(self):
-        return dict((branch, builds[-1])
-                    for (branch, builds) in self.builds.items() if builds)
+    def last_tests(self):
+        return dict((branch, tests[-1])
+                    for (branch, tests) in self.tests.items() if tests)
 
     @property
     def _metadata(self):
@@ -134,9 +144,10 @@ def get_all_systems():
     return [System(*x) for x in c]
 
 
-def add_all_builds(systems):
-    """Add build information to the given list of System objects"""
+def add_all_tests(systems):
+    """Add Test information to the given list of System objects"""
     sys_by_id = dict((s.id, s) for s in systems)
+    build_by_id = {}
     conn = get_db()
     c = MySQLdb.cursors.DictCursor(conn)
     c.execute('SELECT sys_name.id sys_id,sys_build.id build_id,imp_branch,'
@@ -144,13 +155,17 @@ def add_all_builds(systems):
               'sys_test,sys_name,sys_build WHERE sys_name.id=sys_test.sys '
               'AND sys_build.id=sys_test.build ORDER BY imp_date')
     for row in c:
-        s = sys_by_id.get(row['sys_id'])
-        if s:
-            build = Build(
-                id=row['build_id'], imp_branch=row['imp_branch'],
-                imp_date=row['imp_date'], imp_version=row['imp_version'],
-                imp_githash=row['imp_githash'], retcode=row['retcode'])
-            s.builds[row['imp_branch']].append(build)
+        system = sys_by_id.get(row['sys_id'])
+        if system:
+            build = build_by_id.get(row['build_id'])
+            if build is None:
+                build = Build(
+                    id=row['build_id'], imp_branch=row['imp_branch'],
+                    imp_date=row['imp_date'], imp_version=row['imp_version'],
+                    imp_githash=row['imp_githash'])
+                build_by_id[row['build_id']] = build
+            test = Test(build=build, retcode=row['retcode'])
+            system.tests[row['imp_branch']].append(test)
 
 
 @app.route('/')
@@ -160,14 +175,37 @@ def show_summary_page():
     tags = frozenset(itertools.chain.from_iterable(s.tags for s in all_sys))
     if only_tag:
         all_sys = [s for s in all_sys if only_tag in s.tags]
-    add_all_builds(all_sys)
+    add_all_tests(all_sys)
     all_sys = sorted(all_sys, key=operator.attrgetter('name'))
-    tested_sys = [s for s in all_sys if s.last_builds]
-    develop_sys = [s for s in all_sys if not s.last_builds]
+    tested_sys = [s for s in all_sys if s.last_tests]
+    develop_sys = [s for s in all_sys if not s.last_tests]
     return render_template('summary.html', tested_systems=tested_sys,
                            develop_systems=develop_sys,
                            tags=sorted(tags, key=lambda x: x.lower()),
                            only_tag=only_tag)
+
+
+@app.route('/all-builds')
+def show_all_builds():
+    all_sys = get_all_systems()
+    add_all_tests(all_sys)
+    # Keep only systems with at least one test, and sort by name
+    all_sys = sorted((s for s in all_sys if s.last_tests),
+                     key=operator.attrgetter('name'))
+    all_tests = {}
+    all_builds = {}
+    for branch in ALL_BRANCHES:
+        builds_by_id = {}
+        tests_by_id = {}
+        for system in all_sys:
+            for test in system.tests[branch]:
+                builds_by_id[test.build.id] = test.build
+                all_tests[(test.build.id, system.id)] = test
+        all_builds[branch] = [build for (build_id, build)
+                              in sorted(builds_by_id.items(),
+                                        key=operator.itemgetter(0))]
+    return render_template('all-builds.html', systems=all_sys,
+                           builds=all_builds, tests=all_tests)
 
 
 @app.route('/api/list')

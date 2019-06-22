@@ -66,3 +66,12 @@ def test_summary_only_tags():
         assert '<a class="tag" href="?tag=foo">foo</a>' in rv.data
         assert '<a class="tag" href="?tag=bar">bar</a>' in rv.data
         assert '<a class="tag" href="?tag=baz">baz</a>' in rv.data
+
+
+def test_all_builds():
+    """Test the all-builds page"""
+    with utils.mock_systems(systems.app, [sys1, sys2]):
+        c = systems.app.test_client()
+        rv = c.get('/all-builds')
+        assert '<a class="buildbox build_fail" title="Build failed"' in rv.data
+        assert '<a class="buildbox build_ok" title="Build OK"' in rv.data
