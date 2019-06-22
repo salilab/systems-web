@@ -46,7 +46,7 @@
 
     <div class="tags">Tags
       {%- for tag in system.tags|sort %}
-      <a class="tag" href="?tag={{ tag }}">{{ tag }}</a>
+      <a class="tag" href="{{ url_for("summary", tag=tag) }}">{{ tag }}</a>
       {%- endfor %}
     </div>
   </div>

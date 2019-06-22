@@ -169,7 +169,7 @@ def add_all_tests(systems):
 
 
 @app.route('/')
-def show_summary_page():
+def summary():
     only_tag = request.args.get('tag')
     all_sys = get_all_systems()
     tags = frozenset(itertools.chain.from_iterable(s.tags for s in all_sys))
@@ -182,11 +182,11 @@ def show_summary_page():
     return render_template('summary.html', tested_systems=tested_sys,
                            develop_systems=develop_sys,
                            tags=sorted(tags, key=lambda x: x.lower()),
-                           only_tag=only_tag)
+                           only_tag=only_tag, top_level='summary')
 
 
 @app.route('/all-builds')
-def show_all_builds():
+def all_builds():
     all_sys = get_all_systems()
     add_all_tests(all_sys)
     # Keep only systems with at least one test, and sort by name
@@ -205,7 +205,8 @@ def show_all_builds():
                               in sorted(builds_by_id.items(),
                                         key=operator.itemgetter(0))]
     return render_template('all-builds.html', systems=all_sys,
-                           builds=all_builds, tests=all_tests)
+                           builds=all_builds, tests=all_tests,
+                           top_level="all_builds")
 
 
 @app.route('/api/list')

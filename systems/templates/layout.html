@@ -60,8 +60,8 @@ window.onload = linkEmail;
 
 <div class="implinks">
   <ul>
-    <li class="thispage"><a href="?">Summary</a></li>
-    <li><a href="all-builds">All builds</a></li>
+    <li {{ 'class="thispage"'|safe if top_level == 'summary' }}><a href="{{ url_for("summary") }}">Summary</a></li>
+    <li {{ 'class="thispage"'|safe if top_level == 'all_builds' }}><a href="{{ url_for("all_builds") }}">All builds</a></li>
   </ul>
 </div>
 
