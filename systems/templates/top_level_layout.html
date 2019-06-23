@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block toplevel_nav %}
+<div class="implinks">
+  <ul>
+    <li {{ 'class="thispage"'|safe if top_level == 'summary' }}><a href="{{ url_for("summary") }}">Summary</a></li>
+    <li {{ 'class="thispage"'|safe if top_level == 'all_builds' }}><a href="{{ url_for("all_builds") }}">All builds</a></li>
+  </ul>
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@
                         'develop': 'nightly build'} %}
 
 {%- macro get_build_dest(build, system) -%}
-  ?build={{ build.id }}&amp;sys={{ system.id }}
+  {{ url_for("build_by_id", build_id=build.id, system_id=system.id) }}
 {%- endmacro -%}
 
 {%- macro get_build_text(build) %}

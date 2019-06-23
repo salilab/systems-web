@@ -1,0 +1,19 @@
+{% extends "top_level_layout.html" %}
+
+{% block title %}Build information{% endblock %}
+
+{% block body %}
+<div class="system_summary">
+  <p><a href="{{ system.homepage }}">{{ system.title }}</a></p>
+  <p class="sysdesc">{{ system.description }}
+  <a class="sysmore" href="{{ system.homepage }}">[more...]</a></p>
+  <p>This system (using <a href="https://github.com/integrativemodeling/26S-PIPs/tree/8cc84c41118c2e99a34505822215f5c91798a1c9/">these input files</a>) has been verified to work with:</p>
+  <ul>
+    <li><a href="//integrativemodeling.org/">IMP</a> master branch (version 2.11.0, 2019-06-15), revision <a href="https://github.com/salilab/imp/tree/5d1844c5b96869639ded8005e5e58632a8198058">5d1844c5b9</a> (built with only usage checks turned on)</li>
+  </ul>
+  <hr>
+  <p>Detailed test information</p>
+  <ul>
+ </ul>
+</div>
+{% endblock %}

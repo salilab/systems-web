@@ -4,7 +4,7 @@ import json
 import yaml
 import operator
 import itertools
-from flask import Flask, g, render_template, request
+from flask import Flask, g, render_template, request, abort
 from .prerequisites import ALL_PREREQS
 
 
@@ -136,11 +136,16 @@ class System(object):
     conda_prereqs = property(__get_conda_prereqs)
 
 
-def get_all_systems():
+def get_all_systems(id=None):
     """Get a list of all systems, as System objects"""
     conn = get_db()
     c = conn.cursor()
-    c.execute('SELECT id, name, repo FROM sys_name')
+    query = 'SELECT id, name, repo FROM sys_name'
+    if id:
+        query += ' WHERE id=%s'
+        c.execute(query, (id,))
+    else:
+        c.execute(query)
     return [System(*x) for x in c]
 
 
@@ -207,6 +212,22 @@ def all_builds():
     return render_template('all-builds.html', systems=all_sys,
                            builds=all_builds, tests=all_tests,
                            top_level="all_builds")
+
+
+@app.route('/<int:system_id>')
+def system_by_id(system_id):
+    all_sys = get_all_systems(system_id)
+    if not all_sys:
+        abort(404)
+    return render_template('system.html', system=all_sys[0])
+
+
+@app.route('/<int:system_id>/build/<int:build_id>')
+def build_by_id(system_id, build_id):
+    all_sys = get_all_systems(system_id)
+    if not all_sys:
+        abort(404)
+    return render_template('build.html', system=all_sys[0], build_id=build_id)
 
 
 @app.route('/api/list')
