@@ -20,7 +20,7 @@
 
 {% block body %}
 
-{% for branch, builds in builds|dictsort %}
+{% for branch, builds in builds|dictsort|reverse %}
 <div class="branch_summary">
   <p>
     <a href="https://github.com/salilab/imp/tree/{{ branch }}">IMP {{ branch_labels[branch] }} ({{ branch }} branch)</a>

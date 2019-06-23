@@ -31,7 +31,7 @@
       <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
     </p>
 
-    {%- for branch, test in system.last_tests|dictsort %}
+    {%- for branch, test in system.last_tests|dictsort|reverse %}
     <div class="last_build">
       Last worked with IMP <b>{{ branch_labels[branch] }}</b>
       ({{ branch }} branch):
