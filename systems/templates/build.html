@@ -32,6 +32,15 @@ version {{ result.build.imp_version }},
   <hr>
   <p>Detailed test information</p>
   <ul>
+  {% for test in tests %}
+    {% if test.retcode == 0 %}
+    <li>{{ test.name }} passed in {{ test.runtime|timeformat }}</li>
+    {% else %}
+    <li>{{ test.name }} FAILED with code {{ test.retcode }} (took {{ test.runtime|timeformat }}) and stderr:<br>
+      <pre>{{ test.stderr }}</pre>
+    </li>
+    {% endif %}
+  {% endfor %}
  </ul>
 </div>
 {% endblock %}

@@ -99,7 +99,8 @@ def mock_systems(app, systems):
                'imp_githash text, imp_version text, imp_branch text, '
                'modeller_version text)',
                'create table sys_info (build int, sys int, url txt, '
-               'use_modeller bool, imp_build_type text)']
+               'use_modeller bool, imp_build_type text)',
+               'create table sys_test_name (sys int, id int, name text)']
     for i, s in enumerate(systems):
         dbsetup.extend(s.get_sql(i))
         os.mkdir(os.path.join(systop, s.name))

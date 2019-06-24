@@ -34,11 +34,29 @@ def close_db(error):
         g.db_conn.close()
 
 
+class Test(object):
+    """Information about an individual test (see BuildResult.get_tests)"""
+    def __init__(self, name, retcode, stderr, runtime):
+        self.name, self.retcode = name, retcode
+        self.stderr, self.runtime = stderr, runtime
+
+
 class BuildResult(object):
     """The result of testing one System as part of a Build"""
     def __init__(self, build, passed, system):
         self.build, self.passed = build, passed
         self._system_id = system.id
+
+    def get_tests(self):
+        """Get detailed result information as a set of Test objects"""
+        conn = get_db()
+        c = MySQLdb.cursors.DictCursor(conn)
+        c.execute("SELECT sys_test_name.name name,retcode,stderr,runtime "
+                  "FROM sys_test,sys_test_name WHERE build=%s AND "
+                  "sys_test.sys=%s AND sys_test_name.id=sys_test.name AND "
+                  "sys_test_name.sys=%s",
+                  (self.build.id, self._system_id, self._system_id))
+        return [Test(**x) for x in c]
 
     @property
     def _info(self):
@@ -203,6 +221,20 @@ def add_all_build_results(systems, build_id=None):
             system.build_results[row['imp_branch']].append(result)
 
 
+@app.template_filter('timeformat')
+def timeformat_filter(t):
+    if t < 120:
+        return "%d seconds" % t
+    t /= 60.
+    if t < 120:
+        return "%d minutes" % t
+    t /= 60.
+    if t < 48:
+        return "%d hours" % t
+    t /= 24.
+    return "%d days" % t
+
+
 @app.route('/')
 def summary():
     only_tag = request.args.get('tag')
@@ -263,7 +295,9 @@ def build_by_id(system_id, build_id):
         all_sys[0].build_results.values()))
     if len(results) != 1:
         abort(404)
-    return render_template('build.html', system=all_sys[0], result=results[0])
+    tests = results[0].get_tests()
+    return render_template('build.html', system=all_sys[0], result=results[0],
+                           tests=tests)
 
 
 @app.route('/api/list')
