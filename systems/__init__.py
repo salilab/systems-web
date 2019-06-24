@@ -155,10 +155,10 @@ def add_all_tests(systems):
     build_by_id = {}
     conn = get_db()
     c = MySQLdb.cursors.DictCursor(conn)
-    c.execute('SELECT sys_name.id sys_id,sys_build.id build_id,imp_branch,'
+    c.execute('SELECT sys_test.sys sys_id,sys_build.id build_id,imp_branch,'
               'imp_date,imp_version,imp_githash,retcode FROM '
-              'sys_test,sys_name,sys_build WHERE sys_name.id=sys_test.sys '
-              'AND sys_build.id=sys_test.build ORDER BY imp_date')
+              'sys_test,sys_build WHERE sys_build.id=sys_test.build '
+              'ORDER BY imp_date')
     for row in c:
         system = sys_by_id.get(row['sys_id'])
         if system:
