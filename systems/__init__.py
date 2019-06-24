@@ -173,6 +173,8 @@ class System(object):
     accessions = property(lambda self: self._metadata.get('accessions', []))
     pdbdev_accessions = property(lambda self: [x for x in self.accessions
                                                if x.startswith('PDBDEV')])
+    github_url = property(lambda self: self._github['html_url'])
+    github_branch = property(lambda self: self._github['default_branch'])
 
     def __get_conda_prereqs(self):
         reqs = []
@@ -291,9 +293,11 @@ def all_builds():
 @app.route('/<int:system_id>')
 def system_by_id(system_id):
     all_sys = get_all_systems(system_id)
+    add_all_build_results(all_sys)
     if not all_sys:
         abort(404)
-    return render_template('system.html', system=all_sys[0])
+    return render_template('system.html', system=all_sys[0],
+                           results=all_sys[0].last_build_results)
 
 
 @app.route('/<int:system_id>/build/<int:build_id>')

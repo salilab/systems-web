@@ -25,7 +25,7 @@ def set_search_paths(fname):
 class MockSystem(object):
     def __init__(self, name, repo, title, pmid, prereqs, description,
                  homepage, tags, authors, journal, volume, pubdate,
-                 accessions, has_thumbnail=False):
+                 accessions, github_url, github_branch, has_thumbnail=False):
         self.name, self.repo = name, repo
         self.title, self.pmid, self.prereqs = title, pmid, prereqs
         self.description, self.homepage = description, homepage
@@ -34,6 +34,7 @@ class MockSystem(object):
         self.volume = volume
         self.accessions = accessions
         self.has_thumbnail = has_thumbnail
+        self.github_url, self.github_branch = github_url, github_branch
         self.builds = {'master': [], 'develop': []}
 
     def add_build(self, branch, build_id, imp_date, imp_version,
@@ -51,7 +52,9 @@ class MockSystem(object):
             yaml.dump(data, fh)
 
     def make_json(self, fname):
-        data = {'description': self.description, 'homepage': self.homepage}
+        data = {'description': self.description, 'homepage': self.homepage,
+                'html_url': self.github_url,
+                'default_branch': self.github_branch}
         with open(fname, 'w') as fh:
             json.dump(data, fh)
 

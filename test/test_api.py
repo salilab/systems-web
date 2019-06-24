@@ -9,7 +9,8 @@ sys1 = utils.MockSystem(name="sys1", repo="repo1", title="sys1 title",
                         description="sys1 desc", homepage="sys1 home",
                         tags=["foo", "bar"], authors=["Smith J"],
                         journal="Nature", volume="99", pubdate="2014 Dec",
-                        accessions=[])
+                        accessions=[], github_url='ghurl',
+                        github_branch='ghbranch')
 
 
 class Tests(object):

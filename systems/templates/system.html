@@ -7,19 +7,35 @@
 
 {% block body %}
 <div id="download-header">
-  <a href="{{ system.homepage }}"><img style="position: absolute; top: 6em; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" ></a>
+  <a href="{{ system.github_url }}"><img style="position: absolute; top: 6em; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" ></a>
   {%- if system.has_thumbnail() %}
   <div class="systhumb">
     <img src="//integrativemodeling.org/systems/{{ system.name }}/thumb.png"
      alt="thumbnail">
   </div>
 {%- endif %}
-</div>
 
- <p class="subtitle">{{ system.description }}{{ show_links(system) }}</p>
+  <p class="subtitle">{{ system.description }}{{ show_links(system) }}</p>
+
+  <div class="download">
+    <div class="downloadbutton">
+      <a class="download" href="{{ system.github_url }}/archive/{{ system.github_branch }}.zip"><img class="download" src="//integrativemodeling.org/systems/images/download.png" alt="Download">Download files</a>
+    </div>
+    <div class="downloadstat">
+    {% if results['master'] and results['master'].passed %}
+    <img class="buildstat" src="//integrativemodeling.org/systems/images/tick.png" alt="tick"><i>Verified to work with the <a href="//integrativemodeling.org/download.html#stable">latest stable IMP release ({{ results['master'].build.imp_version }})</a>.</i>
+    {% elif results['develop'] and results['develop'].passed %}
+    <img class="buildstat" src="//integrativemodeling.org/systems/images/warning.png" alt="warning">These files work <b>only</b> with a <a href="//integrativemodeling.org/download.html#develop">nightly build of IMP</a> on or after {{ results['develop'].build.imp_date }}, not the stable release.</i>
+    {% else %}
+    <img class="buildstat" src="//integrativemodeling.org/systems/images/cross.png" alt="cross"><i>Warning: these files have not yet been verified to work with the latest version of IMP. We will update this page when they have been.</i>
+    {% endif %}
+
+      <i>The files are also available at <a href="{{ system.github_url }}" title="Clone or fork this system as a git repository at GitHub">GitHub</a>.</i>
+    </div>
+  </div>
+</div>
 
 {{ show_tags(system) }}
-</div>
 
 <div style="clear: both;"></div>
 <hr>
