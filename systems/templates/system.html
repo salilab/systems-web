@@ -22,17 +22,46 @@
       <a class="download" href="{{ system.github_url }}/archive/{{ system.github_branch }}.zip"><img class="download" src="//integrativemodeling.org/systems/images/download.png" alt="Download">Download files</a>
     </div>
     <div class="downloadstat">
-    {% if results['master'] and results['master'].passed %}
-    <img class="buildstat" src="//integrativemodeling.org/systems/images/tick.png" alt="tick"><i>Verified to work with the <a href="//integrativemodeling.org/download.html#stable">latest stable IMP release ({{ results['master'].build.imp_version }})</a>.</i>
-    {% elif results['develop'] and results['develop'].passed %}
-    <img class="buildstat" src="//integrativemodeling.org/systems/images/warning.png" alt="warning">These files work <b>only</b> with a <a href="//integrativemodeling.org/download.html#develop">nightly build of IMP</a> on or after {{ results['develop'].build.imp_date }}, not the stable release.</i>
-    {% else %}
-    <img class="buildstat" src="//integrativemodeling.org/systems/images/cross.png" alt="cross"><i>Warning: these files have not yet been verified to work with the latest version of IMP. We will update this page when they have been.</i>
-    {% endif %}
+      {%- if results['master'] and results['master'].passed %}
+      <img class="buildstat" src="//integrativemodeling.org/systems/images/tick.png" alt="tick"><i>Verified to work with the <a href="//integrativemodeling.org/download.html#stable">latest stable IMP release ({{ results['master'].build.imp_version }})</a>.</i>
+      {%- elif results['develop'] and results['develop'].passed %}
+      <img class="buildstat" src="//integrativemodeling.org/systems/images/warning.png" alt="warning">These files work <b>only</b> with a <a href="//integrativemodeling.org/download.html#develop">nightly build of IMP</a> on or after {{ results['develop'].build.imp_date }}, not the stable release.</i>
+      {%- else %}
+      <img class="buildstat" src="//integrativemodeling.org/systems/images/cross.png" alt="cross"><i>Warning: these files have not yet been verified to work with the latest version of IMP. We will update this page when they have been.</i>
+      {%- endif %}
 
       <i>The files are also available at <a href="{{ system.github_url }}" title="Clone or fork this system as a git repository at GitHub">GitHub</a>.</i>
     </div>
   </div>
+
+  <div class="prereqs">
+    Additional software needed to use these files:
+    {%- for p in system.prereqs %}
+    <a href="{{ p.url }}">{{ p.name }}</a>
+    {%- endfor %}
+
+    <a class="conda_show" onclick="show_conda(); return false;" 
+     title="Show commands needed to install all of these software packages"
+     href="#">install instructions</a>
+  </div>
+
+  <div class="conda_install" id="conda_install">
+    <p><img src="//integrativemodeling.org/images/anaconda-symbol.svg"
+        alt="Anaconda logo">
+    To install the software needed to reproduce this system with the
+    <a href="https://store.continuum.io/cshop/anaconda/">Anaconda Python</a>
+    command line tool (<tt>conda</tt>), run the following commands:
+    </p>
+
+    <tt>conda config --add channels salilab</tt><br>
+    <tt>conda install {{ system.conda_prereqs|join(' ') }}</tt>
+
+    <p><img src="//integrativemodeling.org/images/ucsf.png" alt="UCSF logo">
+    To set up the environment on the UCSF QB3 cluster to run this system, run:
+    </p>
+    <tt>module load imp {{ system.module_prereqs|join(' ') }}</tt>
+  </div>
+
 </div>
 
 {{ show_tags(system) }}

@@ -176,14 +176,20 @@ class System(object):
     github_url = property(lambda self: self._github['html_url'])
     github_branch = property(lambda self: self._github['default_branch'])
 
-    def __get_conda_prereqs(self):
-        reqs = []
-        for p in self._metadata.get('prereqs', []) + ['imp']:
-            po = ALL_PREREQS[p]
-            if po.conda_package:
-                reqs.append(po.conda_package)
-        return reqs
-    conda_prereqs = property(__get_conda_prereqs)
+    @property
+    def prereqs(self):
+        return [ALL_PREREQS[p]
+                for p in ['imp'] + self._metadata.get('prereqs', [])]
+
+    @property
+    def module_prereqs(self):
+        # BioPython is already installed on our compute cluster, so a
+        # module isn't needed
+        return [p.name for p in self.prereqs if p.name != 'python/biopython']
+
+    @property
+    def conda_prereqs(self):
+        return [p.conda_package for p in self.prereqs if p.conda_package]
 
 
 def get_all_systems(id=None):
@@ -319,9 +325,8 @@ def build_by_id(system_id, build_id):
 @app.route('/api/list')
 def list_systems():
     def make_dict(s):
-        return dict((k, getattr(s, k))
-                    for k in ('name', 'repo', 'pmid', 'homepage',
-                              'conda_prereqs'))
+        return dict((k, getattr(s, k)) for k in ('name', 'repo', 'pmid',
+                                                 'homepage', 'conda_prereqs'))
     # Cannot use jsonify here as it doesn't support lists in flask 0.10
     return app.response_class(
         json.dumps([make_dict(s) for s in get_all_systems()]),
