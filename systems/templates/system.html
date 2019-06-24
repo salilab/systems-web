@@ -3,7 +3,6 @@
 {% from "macros.html" import show_links, show_tags %}
 
 {% block pagetitle %}{{ system.title }}{% endblock %}
-{% block title %}{{ system.title }}{% endblock %}
 
 {% block body %}
 <div id="download-header">
@@ -14,6 +13,7 @@
      alt="thumbnail">
   </div>
 {%- endif %}
+  <h1 class="systitle">{{ system.title }}</h1>
 
   <p class="subtitle">{{ system.description }}{{ show_links(system) }}</p>
 
