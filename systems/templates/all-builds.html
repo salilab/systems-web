@@ -2,14 +2,14 @@
 
 {% from "macros.html" import branch_labels, get_build_dest, get_build_text %}
 
-{%- macro show_test(test, system) %}
-  {%- if test %}
-    {%- if test.retcode == 0 %}
+{%- macro show_result(result, system) %}
+  {%- if result %}
+    {%- if result.passed %}
     <a class="buildbox build_ok" title="Build OK"
-     href="{{ get_build_dest(test.build, system) }}">&nbsp;</a>
+     href="{{ get_build_dest(result.build, system) }}">&nbsp;</a>
     {%- else %}
     <a class="buildbox build_fail" title="Build failed"
-     href="{{ get_build_dest(test.build, system) }}">&nbsp;</a>
+     href="{{ get_build_dest(result.build, system) }}">&nbsp;</a>
     {% endif %}
   {%- else %}
   none
@@ -42,7 +42,7 @@
     <tr>
       <td class="builddate" title="">{{ get_build_text(build) }}</td>
     {% for system in systems %}
-      <td>{{ show_test(tests.get((build.id, system.id)), system) }}</td>
+      <td>{{ show_result(results.get((build.id, system.id)), system) }}</td>
     {% endfor %}
     </tr>
   {% endfor %}

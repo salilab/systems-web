@@ -34,10 +34,10 @@ def close_db(error):
         g.db_conn.close()
 
 
-class Test(object):
+class BuildResult(object):
     """The result of testing one System as part of a Build"""
-    def __init__(self, build, retcode):
-        self.build, self.retcode = build, retcode
+    def __init__(self, build, passed):
+        self.build, self.passed = build, passed
 
 
 class Build(object):
@@ -52,13 +52,14 @@ class Build(object):
 class System(object):
     def __init__(self, id, name, repo):
         self.id, self.name, self.repo = id, name, repo
-        # Use add_all_tests() to fill in
-        self.tests = dict((branch, []) for branch in ALL_BRANCHES)
+        # Use add_all_build_results() to fill in
+        self.build_results = dict((branch, []) for branch in ALL_BRANCHES)
 
     @property
-    def last_tests(self):
-        return dict((branch, tests[-1])
-                    for (branch, tests) in self.tests.items() if tests)
+    def last_build_results(self):
+        return dict((branch, results[-1])
+                    for (branch, results) in self.build_results.items()
+                    if results)
 
     @property
     def _metadata(self):
@@ -149,15 +150,16 @@ def get_all_systems(id=None):
     return [System(*x) for x in c]
 
 
-def add_all_tests(systems):
-    """Add Test information to the given list of System objects"""
+def add_all_build_results(systems):
+    """Add BuildResult information to the given list of System objects"""
     sys_by_id = dict((s.id, s) for s in systems)
     build_by_id = {}
     conn = get_db()
     c = MySQLdb.cursors.DictCursor(conn)
-    c.execute('SELECT sys_test.sys sys_id,sys_build.id build_id,imp_branch,'
-              'imp_date,imp_version,imp_githash,retcode FROM '
-              'sys_test,sys_build WHERE sys_build.id=sys_test.build '
+    c.execute('SELECT sys sys_id,sys_build.id build_id,imp_branch,'
+              'imp_date,imp_version,imp_githash,MAX(retcode) retcode FROM '
+              'sys_test INNERT JOIN sys_build ON sys_build.id=build '
+              'GROUP BY build_id,sys_id,imp_branch '
               'ORDER BY imp_date')
     for row in c:
         system = sys_by_id.get(row['sys_id'])
@@ -169,8 +171,8 @@ def add_all_tests(systems):
                     imp_date=row['imp_date'], imp_version=row['imp_version'],
                     imp_githash=row['imp_githash'])
                 build_by_id[row['build_id']] = build
-            test = Test(build=build, retcode=row['retcode'])
-            system.tests[row['imp_branch']].append(test)
+            result = BuildResult(build=build, passed=(row['retcode'] == 0))
+            system.build_results[row['imp_branch']].append(result)
 
 
 @app.route('/')
@@ -180,10 +182,10 @@ def summary():
     tags = frozenset(itertools.chain.from_iterable(s.tags for s in all_sys))
     if only_tag:
         all_sys = [s for s in all_sys if only_tag in s.tags]
-    add_all_tests(all_sys)
+    add_all_build_results(all_sys)
     all_sys = sorted(all_sys, key=operator.attrgetter('name'))
-    tested_sys = [s for s in all_sys if s.last_tests]
-    develop_sys = [s for s in all_sys if not s.last_tests]
+    tested_sys = [s for s in all_sys if s.last_build_results]
+    develop_sys = [s for s in all_sys if not s.last_build_results]
     return render_template('summary.html', tested_systems=tested_sys,
                            develop_systems=develop_sys,
                            tags=sorted(tags, key=lambda x: x.lower()),
@@ -193,24 +195,24 @@ def summary():
 @app.route('/all-builds')
 def all_builds():
     all_sys = get_all_systems()
-    add_all_tests(all_sys)
-    # Keep only systems with at least one test, and sort by name
-    all_sys = sorted((s for s in all_sys if s.last_tests),
+    add_all_build_results(all_sys)
+    # Keep only systems with at least one build result, and sort by name
+    all_sys = sorted((s for s in all_sys if s.last_build_results),
                      key=operator.attrgetter('name'))
-    all_tests = {}
+    all_results = {}
     all_builds = {}
     for branch in ALL_BRANCHES:
         builds_by_id = {}
-        tests_by_id = {}
+        results_by_id = {}
         for system in all_sys:
-            for test in system.tests[branch]:
-                builds_by_id[test.build.id] = test.build
-                all_tests[(test.build.id, system.id)] = test
+            for result in system.build_results[branch]:
+                builds_by_id[result.build.id] = result.build
+                all_results[(result.build.id, system.id)] = result
         all_builds[branch] = [build for (build_id, build)
                               in sorted(builds_by_id.items(),
                                         key=operator.itemgetter(0))]
     return render_template('all-builds.html', systems=all_sys,
-                           builds=all_builds, tests=all_tests,
+                           builds=all_builds, results=all_results,
                            top_level="all_builds")
 
 
