@@ -41,6 +41,8 @@ def test_system_class():
         assert s.pubmed_title == 'Smith J. Nature 99, 2014'
         assert s.accessions == ['PDBDEV_00000001', 'foo']
         assert s.pdbdev_accessions == ['PDBDEV_00000001']
+        assert s.module_prereqs == ['imp', 'modeller', 'python/scikit']
+        assert s.conda_prereqs == ['imp', 'modeller', 'scikit-learn']
 
 
 def test_summary_all_tags():

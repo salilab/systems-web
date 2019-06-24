@@ -185,7 +185,8 @@ class System(object):
     def module_prereqs(self):
         # BioPython is already installed on our compute cluster, so a
         # module isn't needed
-        return [p.name for p in self.prereqs if p.name != 'python/biopython']
+        return ['imp'] + [p for p in self._metadata.get('prereqs', [])
+                          if p != 'python/biopython']
 
     @property
     def conda_prereqs(self):
