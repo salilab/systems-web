@@ -1,6 +1,6 @@
 {% extends "top_level_layout.html" %}
 
-{% from "macros.html" import branch_labels, get_build_link %}
+{% from "macros.html" import branch_labels, get_build_link, show_links, show_tags %}
 
 {%- macro show_systems(systems) %}
 {% for system in systems %}
@@ -15,17 +15,7 @@
   {%- endif %}
   <div class="systext">
     <p class="systitle">
-      <a href="{{ system.homepage }}">{{ system.title }}</a>
-      {% if system.pmid %}
-      <a class="pubmed" title="{{ system.pubmed_title }}"
-       href="https://www.ncbi.nlm.nih.gov/pubmed/{{ system.pmid }}"><img
-       src="//integrativemodeling.org/systems/images/pubmed.png"
-       alt="PubMed logo"></a>
-      {% endif %}
-      {%- if system.pdbdev_accessions %}
-      <a class="pdb_dev" title="This structure is deposited in the PDB-Dev database with accession code{{ 's' if system.pdbdev_accessions|length > 1 }} {{ system.pdbdev_accessions|join(", ") }}"
-       href="https://pdb-dev.wwpdb.org/">PDB-Dev</a>
-      {% endif %}
+      <a href="{{ system.homepage }}">{{ system.title }}</a>{{ show_links(system) }}
     </p>
     <p class="sysdesc">{{ system.description|striptags|replace('FRETR', 'FRET<sub>R</sub>')|safe }}
       <a class="sysmore" href="{{ system.homepage }}">[more...]</a>
@@ -43,12 +33,6 @@
       {%- endif %}
     </div>
     {%- endfor %}
-
-    <div class="tags">Tags
-      {%- for tag in system.tags|sort %}
-      <a class="tag" href="{{ url_for("summary", tag=tag) }}">{{ tag }}</a>
-      {%- endfor %}
-    </div>
   </div>
 </div>
 {% endfor %}

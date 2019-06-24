@@ -106,6 +106,18 @@ class System(object):
         return self._metadata_internal
 
     @property
+    def readme(self):
+        if not hasattr(self, '_readme_internal'):
+            readme = os.path.join(app.config['SYSTEM_TOP'], self.name,
+                                  'readme.html')
+            if os.path.exists(readme):
+                with open(readme) as fh:
+                    self._readme_internal = fh.read()
+            else:
+                self._readme_internal = ''
+        return self._readme_internal
+
+    @property
     def _pubmed(self):
         if not hasattr(self, '_pubmed_internal'):
             pubmed = os.path.join(app.config['SYSTEM_TOP'], self.name,

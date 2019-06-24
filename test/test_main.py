@@ -82,3 +82,10 @@ def test_build():
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/1/build/1')
+
+
+def test_system():
+    """Test the system information page"""
+    with utils.mock_systems(systems.app, [sys1, sys2]):
+        c = systems.app.test_client()
+        rv = c.get('/1')

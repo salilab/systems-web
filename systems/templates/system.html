@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% from "macros.html" import show_links, show_tags %}
+
 {% block pagetitle %}{{ system.title }}{% endblock %}
 {% block title %}{{ system.title }}{% endblock %}
 
@@ -14,7 +16,12 @@
 {%- endif %}
 </div>
 
- <p class="subtitle">{{ system.description }}</p>
+ <p class="subtitle">{{ system.description }}{{ show_links(system) }}</p>
 
+{{ show_tags(system) }}
 </div>
+
+<div style="clear: both;"></div>
+<hr>
+{{ system.readme|safe }}
 {% endblock %}

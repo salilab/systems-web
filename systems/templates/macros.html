@@ -23,3 +23,24 @@
        title="IMP nightly build">{{ get_build_text(build) }}</a>
   {%- endif %}
 {%- endmacro %}
+
+{% macro show_links(system) %}
+  {% if system.pmid %}
+  <a class="pubmed" title="{{ system.pubmed_title }}"
+   href="https://www.ncbi.nlm.nih.gov/pubmed/{{ system.pmid }}"><img
+   src="//integrativemodeling.org/systems/images/pubmed.png"
+   alt="PubMed logo"></a>
+  {% endif %}
+  {%- if system.pdbdev_accessions %}
+  <a class="pdb_dev" title="This structure is deposited in the PDB-Dev database with accession code{{ 's' if system.pdbdev_accessions|length > 1 }} {{ system.pdbdev_accessions|join(", ") }}"
+   href="https://pdb-dev.wwpdb.org/">PDB-Dev</a>
+  {% endif %}
+{% endmacro %}
+
+{% macro show_tags(system) %}
+<div class="tags">Tags
+  {%- for tag in system.tags|sort %}
+  <a class="tag" href="{{ url_for("summary", tag=tag) }}">{{ tag }}</a>
+  {%- endfor %}
+</div>
+{% endmacro %}
