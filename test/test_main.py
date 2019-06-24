@@ -75,3 +75,10 @@ def test_all_builds():
         rv = c.get('/all-builds')
         assert '<a class="buildbox build_fail" title="Build failed"' in rv.data
         assert '<a class="buildbox build_ok" title="Build OK"' in rv.data
+
+
+def test_build():
+    """Test the build information page"""
+    with utils.mock_systems(systems.app, [sys1, sys2]):
+        c = systems.app.test_client()
+        rv = c.get('/1/build/1')

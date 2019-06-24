@@ -97,7 +97,9 @@ def mock_systems(app, systems):
                'retcode int, stderr text, runtime int)',
                'create table sys_build (id int primary key, imp_date text, '
                'imp_githash text, imp_version text, imp_branch text, '
-               'modeller_version text)']
+               'modeller_version text)',
+               'create table sys_info (build int, sys int, url txt, '
+               'use_modeller bool, imp_build_type text)']
     for i, s in enumerate(systems):
         dbsetup.extend(s.get_sql(i))
         os.mkdir(os.path.join(systop, s.name))

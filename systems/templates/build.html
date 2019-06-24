@@ -2,6 +2,18 @@
 
 {% block title %}Build information{% endblock %}
 
+{% set imp_build_type = {'fast': 'fast build',
+                         'release': 'built with only usage checks turned on',
+                         'debug': 'built with all checks turned on'}
+%}
+
+{%- macro imp_version(result) %}
+{%- if result.build.imp_version -%}
+version {{ result.build.imp_version }},
+{% endif -%}
+{{ result.build.imp_date }}
+{%- endmacro %}
+
 {% block body %}
 <div class="system_summary">
   <p><a href="{{ system.homepage }}">{{ system.title }}</a></p>
@@ -15,7 +27,7 @@
     {%- if result.use_modeller %}
     <li><a href="//salilab.org/modeller/">MODELLER</a> version {{ result.build.modeller_version }}</li>
     {%- endif %}
-    <li><a href="//integrativemodeling.org/">IMP</a> master branch (version 2.11.0, 2019-06-15), revision <a href="https://github.com/salilab/imp/tree/5d1844c5b96869639ded8005e5e58632a8198058">5d1844c5b9</a> (built with only usage checks turned on)</li>
+    <li><a href="//integrativemodeling.org/">IMP</a> {{ result.build.imp_branch }} branch ({{ imp_version(result) }}), revision <a href="https://github.com/salilab/imp/tree/{{ result.build.imp_githash }}">{{ result.build.imp_githash[:10] }}</a> ({{ imp_build_type[result.imp_build_type] }})</li>
   </ul>
   <hr>
   <p>Detailed test information</p>
