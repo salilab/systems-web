@@ -35,7 +35,7 @@
     <div class="last_build">
       Last worked with IMP <b>{{ branch_labels[branch] }}</b>
       ({{ branch }} branch):
-      {%- if test.retcode == 0 %}
+      {%- if test.passed %}
         {{ get_build_link(test.build, system)}}
       {%- else %}
          <span class="build_fail">never</span>
