@@ -36,8 +36,24 @@ def close_db(error):
 
 class BuildResult(object):
     """The result of testing one System as part of a Build"""
-    def __init__(self, build, passed):
+    def __init__(self, build, passed, system):
         self.build, self.passed = build, passed
+        self._system_id = system.id
+
+    @property
+    def _info(self):
+        if not hasattr(self, '_info_internal'):
+            conn = get_db()
+            c = MySQLdb.cursors.DictCursor(conn)
+            c.execute("SELECT url,use_modeller,imp_build_type FROM sys_info "
+                      "WHERE sys=%s AND build=%s",
+                      (self._system_id, self.build.id))
+            self._info_internal = c.fetchone()
+        return self._info_internal
+
+    url = property(lambda self: self._info['url'])
+    use_modeller = property(lambda self: self._info['use_modeller'])
+    imp_build_type = property(lambda self: self._info['imp_build_type'])
 
 
 class Build(object):
@@ -150,20 +166,26 @@ def get_all_systems(id=None):
     return [System(*x) for x in c]
 
 
-def add_all_build_results(systems):
+def add_all_build_results(systems, build_id=None):
     """Add BuildResult information to the given list of System objects"""
     sys_by_id = dict((s.id, s) for s in systems)
     build_by_id = {}
     conn = get_db()
     c = MySQLdb.cursors.DictCursor(conn)
-    where = ''
+    args = []
+    wheres = []
     if len(systems) == 1:
-        where = 'WHERE sys=%d' % systems[0].id
-    c.execute('SELECT sys sys_id,sys_build.id build_id,imp_branch,'
+        wheres.append('sys=%s')
+        args.append(systems[0].id)
+    if build_id:
+        wheres.append('build=%s')
+        args.append(build_id)
+    where = ('WHERE ' + ' AND '.join(wheres)) if wheres else ''
+    c.execute('SELECT sys sys_id,build build_id,imp_branch,'
               'imp_date,imp_version,imp_githash,MAX(retcode) retcode FROM '
               'sys_test INNERT JOIN sys_build ON sys_build.id=build '
               '%s GROUP BY build_id,sys_id,imp_branch '
-              'ORDER BY imp_date' % where)
+              'ORDER BY imp_date' % where, args)
     for row in c:
         system = sys_by_id.get(row['sys_id'])
         if system:
@@ -174,7 +196,8 @@ def add_all_build_results(systems):
                     imp_date=row['imp_date'], imp_version=row['imp_version'],
                     imp_githash=row['imp_githash'])
                 build_by_id[row['build_id']] = build
-            result = BuildResult(build=build, passed=(row['retcode'] == 0))
+            result = BuildResult(build=build, passed=(row['retcode'] == 0),
+                                 system=system)
             system.build_results[row['imp_branch']].append(result)
 
 
@@ -232,7 +255,13 @@ def build_by_id(system_id, build_id):
     all_sys = get_all_systems(system_id)
     if not all_sys:
         abort(404)
-    return render_template('build.html', system=all_sys[0], build_id=build_id)
+    add_all_build_results(all_sys, build_id)
+    # Should be exactly one build result
+    results = list(itertools.chain.from_iterable(
+        all_sys[0].build_results.values()))
+    if len(results) != 1:
+        abort(404)
+    return render_template('build.html', system=all_sys[0], result=results[0])
 
 
 @app.route('/api/list')

@@ -8,10 +8,10 @@ class MockCursor(object):
         self.sql, self.db = conn.sql, conn.db
         self.dbcursor = self.db.cursor()
 
-    def execute(self, statement):
+    def execute(self, statement, args=()):
         self.sql.append(statement)
         # sqlite uses ? as a placeholder; MySQL uses %s
-        self.dbcursor.execute(statement.replace('%s', '?'))
+        self.dbcursor.execute(statement.replace('%s', '?'), args)
 
     def __iter__(self):
         fa = self.dbcursor.fetchall()
