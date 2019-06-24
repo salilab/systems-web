@@ -59,10 +59,11 @@ class BuildResult(object):
 class Build(object):
     """A run over all Systems with a given configuration"""
     def __init__(self, id, imp_branch, imp_date, imp_version,
-                 imp_githash):
+                 imp_githash, modeller_version):
         self.id, self.imp_branch = id, imp_branch
         self.imp_date, self.imp_version = imp_date, imp_version
         self.imp_githash = imp_githash
+        self.modeller_version = modeller_version
 
 
 class System(object):
@@ -181,7 +182,7 @@ def add_all_build_results(systems, build_id=None):
         wheres.append('build=%s')
         args.append(build_id)
     where = ('WHERE ' + ' AND '.join(wheres)) if wheres else ''
-    c.execute('SELECT sys sys_id,build build_id,imp_branch,'
+    c.execute('SELECT sys sys_id,build build_id,imp_branch,modeller_version,'
               'imp_date,imp_version,imp_githash,MAX(retcode) retcode FROM '
               'sys_test INNERT JOIN sys_build ON sys_build.id=build '
               '%s GROUP BY build_id,sys_id,imp_branch '
@@ -194,7 +195,8 @@ def add_all_build_results(systems, build_id=None):
                 build = Build(
                     id=row['build_id'], imp_branch=row['imp_branch'],
                     imp_date=row['imp_date'], imp_version=row['imp_version'],
-                    imp_githash=row['imp_githash'])
+                    imp_githash=row['imp_githash'],
+                    modeller_version=row['modeller_version'])
                 build_by_id[row['build_id']] = build
             result = BuildResult(build=build, passed=(row['retcode'] == 0),
                                  system=system)

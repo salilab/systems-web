@@ -12,6 +12,9 @@
      else 'was tested but <span class="build_fail">does not work</span> with:'|safe }}
   </p>
   <ul>
+    {%- if result.use_modeller %}
+    <li><a href="//salilab.org/modeller/">MODELLER</a> version {{ result.build.modeller_version }}</li>
+    {%- endif %}
     <li><a href="//integrativemodeling.org/">IMP</a> master branch (version 2.11.0, 2019-06-15), revision <a href="https://github.com/salilab/imp/tree/5d1844c5b96869639ded8005e5e58632a8198058">5d1844c5b9</a> (built with only usage checks turned on)</li>
   </ul>
   <hr>
