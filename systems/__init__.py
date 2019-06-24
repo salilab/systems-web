@@ -156,11 +156,14 @@ def add_all_build_results(systems):
     build_by_id = {}
     conn = get_db()
     c = MySQLdb.cursors.DictCursor(conn)
+    where = ''
+    if len(systems) == 1:
+        where = 'WHERE sys=%d' % systems[0].id
     c.execute('SELECT sys sys_id,sys_build.id build_id,imp_branch,'
               'imp_date,imp_version,imp_githash,MAX(retcode) retcode FROM '
               'sys_test INNERT JOIN sys_build ON sys_build.id=build '
-              'GROUP BY build_id,sys_id,imp_branch '
-              'ORDER BY imp_date')
+              '%s GROUP BY build_id,sys_id,imp_branch '
+              'ORDER BY imp_date' % where)
     for row in c:
         system = sys_by_id.get(row['sys_id'])
         if system:
