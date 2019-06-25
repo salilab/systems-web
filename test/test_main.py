@@ -30,40 +30,6 @@ sys2.add_build('develop', 3, imp_date="2019-07-15", imp_version=None,
                imp_build_type='release')
 
 
-def test_test_class():
-    """Test the Test class"""
-    with systems.app.app_context():
-        t = systems.Test(name='foo', retcode=42, stderr='bar', runtime=99)
-        assert t.name == 'foo'
-        assert t.retcode == 42
-        assert t.stderr == 'bar'
-        assert t.runtime == 99
-
-
-def test_system_class():
-    """Test the System class"""
-    with utils.mock_systems(systems.app, [sys1, sys2]):
-        with systems.app.app_context():
-            s, s2 = systems.get_all_systems()
-        for i in range(2):  # 2nd run should hit cache in most cases
-            assert s.name == 'sys1'
-            assert s.repo == 'repo1'
-            assert s.title == 'sys1 title'
-            assert s.pmid == '1234'
-            assert s.description == 'sys1 desc'
-            assert s.homepage == 'sys1 home'
-            assert s.tags == ["foo", "bar"]
-            assert s.pubmed_title == 'Smith J. Nature 99, 2014'
-            assert s.accessions == ['PDBDEV_00000001', 'foo']
-            assert s.pdbdev_accessions == ['PDBDEV_00000001']
-            assert s.module_prereqs == ['imp', 'modeller', 'python/scikit']
-            assert s.conda_prereqs == ['imp', 'modeller', 'scikit-learn']
-            assert s.readme == u'foobar'
-            assert s2.readme == ''
-            assert s2.pmid is None
-            assert s2.pubmed_title is None
-
-
 def test_summary_all_tags():
     """Test the summary page with all tags shown"""
     with utils.mock_systems(systems.app, [sys1, sys2]):
