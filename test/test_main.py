@@ -149,3 +149,16 @@ def test_timeformat_filter():
         assert systems.timeformat_filter(2110) == "35 minutes"
         assert systems.timeformat_filter(18030) == "5 hours"
         assert systems.timeformat_filter(2592000) == "30 days"
+
+
+def test_500():
+    """Test custom error handler for an internal error"""
+    with utils.mock_systems(systems.app, [sys1]):
+        c = systems.app.test_client()
+        # Force an error
+        systems.app.config['SYSTEM_TOP'] = '/not/exist'
+        # Don't throw an exception but instead return a 500 HTTP response
+        systems.app.testing = False
+        rv = c.get('/')
+        assert 'An unexpected error has occurred' in rv.data
+        assert rv.status_code == 500
