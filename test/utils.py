@@ -63,13 +63,14 @@ class MockSystem(object):
             json.dump(data, fh)
 
     def make_pubmed(self, fname):
-        authors = [{'name': name, 'authtype': 'Author'}
-                   for name in self.authors]
-        pub = {'pubdate': self.pubdate, 'source': self.journal,
-               'authors': authors, 'volume': self.volume}
-        data = {'result': {"uids": [self.pmid], self.pmid: pub}}
-        with open(fname, 'w') as fh:
-            json.dump(data, fh)
+        if self.pmid:
+            authors = [{'name': name, 'authtype': 'Author'}
+                       for name in self.authors]
+            pub = {'pubdate': self.pubdate, 'source': self.journal,
+                   'authors': authors, 'volume': self.volume}
+            data = {'result': {"uids": [self.pmid], self.pmid: pub}}
+            with open(fname, 'w') as fh:
+                json.dump(data, fh)
 
     def make_thumbnail(self, fname):
         if self.has_thumbnail:

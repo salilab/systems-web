@@ -12,7 +12,7 @@ sys1 = utils.MockSystem(name="sys1", repo="repo1", title="sys1 title",
                         github_url='ghurl', github_branch='ghbranch',
                         readme='foobar')
 sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
-                        pmid="5678", prereqs=["modeller", "python/scikit"],
+                        pmid=None, prereqs=["modeller", "python/scikit"],
                         description="sys2 desc", homepage="sys2 home",
                         tags=["foo", "baz"],
                         authors=["Smith J", "Jones A", "Jones B"],
@@ -60,6 +60,8 @@ def test_system_class():
             assert s.conda_prereqs == ['imp', 'modeller', 'scikit-learn']
             assert s.readme == u'foobar'
             assert s2.readme == ''
+            assert s2.pmid is None
+            assert s2.pubmed_title is None
 
 
 def test_summary_all_tags():
