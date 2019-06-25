@@ -20,11 +20,14 @@ sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
                         accessions=[], has_thumbnail=True,
                         github_url='ghurl', github_branch='ghbranch')
 sys2.add_build('master', 1, imp_date="2019-06-15", imp_version="2.11.0",
-               imp_githash="2a", retcode=0)
+               imp_githash="2a", retcode=0, url='url1', use_modeller=True,
+               imp_build_type='fast')
 sys2.add_build('develop', 2, imp_date="2019-06-15", imp_version=None,
-               imp_githash="3a", retcode=0)
+               imp_githash="3a", retcode=0, url='url2', use_modeller=True,
+               imp_build_type='debug')
 sys2.add_build('develop', 3, imp_date="2019-07-15", imp_version=None,
-               imp_githash="4a", retcode=1)
+               imp_githash="4a", retcode=1, url='url3', use_modeller=False,
+               imp_build_type='release')
 
 
 def test_test_class():
@@ -95,11 +98,21 @@ def test_all_builds():
         assert '<a class="buildbox build_ok" title="Build OK"' in rv.data
 
 
-def test_build():
-    """Test the build information page"""
+def test_build_failed():
+    """Test the build information page with a system that failed"""
+    with utils.mock_systems(systems.app, [sys1, sys2]):
+        c = systems.app.test_client()
+        rv = c.get('/1/build/3')
+        assert ('was tested but <span class="build_fail">does not work'
+                in rv.data)
+
+
+def test_build_ok():
+    """Test the build information page with a system that passed"""
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/1/build/1')
+        assert 'has been verified to work with:' in rv.data
 
 
 def test_system():

@@ -40,10 +40,12 @@ class MockSystem(object):
         self.builds = {'master': [], 'develop': []}
 
     def add_build(self, branch, build_id, imp_date, imp_version,
-                  imp_githash, retcode):
+                  imp_githash, retcode, url, use_modeller, imp_build_type):
         build = {'id': build_id, 'imp_date': imp_date,
                  'imp_version': imp_version, 'imp_githash': imp_githash,
-                 'retcode': retcode}
+                 'retcode': retcode, 'url': url,
+                 'use_modeller': use_modeller,
+                 'imp_build_type': imp_build_type}
         self.builds[branch].append(build)
 
     def make_yaml(self, fname):
@@ -92,6 +94,10 @@ class MockSystem(object):
                 yield ('insert into sys_test (build, sys, retcode) values '
                        '(%d, %d, %d)'
                        % (build['id'], id, build['retcode']))
+                yield ('insert into sys_info (sys, build, url, use_modeller, '
+                       'imp_build_type) values (%d, %d, "%s", %d, "%s")'
+                       % (id, build['id'], build['url'], build['use_modeller'],
+                          build['imp_build_type']))
 
 
 @contextlib.contextmanager
