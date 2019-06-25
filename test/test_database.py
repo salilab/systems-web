@@ -72,5 +72,5 @@ def test_system_class():
             assert s2.pmid is None
             assert s2.pubmed_title is None
             assert s3.pubmed_title == 'Smith J, Jones A et al. Nature 99, 2014'
-            assert (s3.homepage
-                    == 'https://integrativemodeling.org/systems/?sys=22')
+            assert (s3.homepage ==
+                    'https://integrativemodeling.org/systems/?sys=22')
