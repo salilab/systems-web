@@ -120,8 +120,8 @@ class System(object):
             readme = os.path.join(app.config['SYSTEM_TOP'], self.name,
                                   'readme.html')
             if os.path.exists(readme):
-                with open(readme) as fh:
-                    self._readme_internal = fh.read()
+                with open(readme, 'rb') as fh:
+                    self._readme_internal = fh.read().decode('utf-8')
             else:
                 self._readme_internal = ''
         return self._readme_internal

@@ -25,7 +25,8 @@ def set_search_paths(fname):
 class MockSystem(object):
     def __init__(self, name, repo, title, pmid, prereqs, description,
                  homepage, tags, authors, journal, volume, pubdate,
-                 accessions, github_url, github_branch, has_thumbnail=False):
+                 accessions, github_url, github_branch, has_thumbnail=False,
+                 readme=None):
         self.name, self.repo = name, repo
         self.title, self.pmid, self.prereqs = title, pmid, prereqs
         self.description, self.homepage = description, homepage
@@ -35,6 +36,7 @@ class MockSystem(object):
         self.accessions = accessions
         self.has_thumbnail = has_thumbnail
         self.github_url, self.github_branch = github_url, github_branch
+        self.readme = readme
         self.builds = {'master': [], 'develop': []}
 
     def add_build(self, branch, build_id, imp_date, imp_version,
@@ -71,6 +73,11 @@ class MockSystem(object):
         if self.has_thumbnail:
             with open(fname, 'w') as fh:
                 pass  # dummy empty image
+
+    def make_readme(self, fname):
+        if self.readme:
+            with open(fname, 'w') as fh:
+                fh.write(self.readme)
 
     def get_sql(self, id):
         yield ('insert into sys_name (id, name, repo) values (%d, "%s", "%s")'
@@ -111,6 +118,7 @@ def mock_systems(app, systems):
         s.make_json(os.path.join(systop, s.name, 'github.json'))
         s.make_pubmed(os.path.join(systop, s.name, 'pubmed.json'))
         s.make_thumbnail(os.path.join(systop, s.name, 'thumb.png'))
+        s.make_readme(os.path.join(systop, s.name, 'readme.html'))
     app.config['DATABASE'] = dbsetup
     app.config['SYSTEM_TOP'] = systop
     yield

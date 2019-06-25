@@ -9,7 +9,8 @@ sys1 = utils.MockSystem(name="sys1", repo="repo1", title="sys1 title",
                         tags=["foo", "bar"], authors=["Smith J"],
                         journal="Nature", volume="99", pubdate="2014 Dec",
                         accessions=['PDBDEV_00000001', 'foo'],
-                        github_url='ghurl', github_branch='ghbranch')
+                        github_url='ghurl', github_branch='ghbranch',
+                        readme='foobar')
 sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
                         pmid="5678", prereqs=["modeller", "python/scikit"],
                         description="sys2 desc", homepage="sys2 home",
@@ -28,9 +29,9 @@ sys2.add_build('develop', 3, imp_date="2019-07-15", imp_version=None,
 
 def test_system_class():
     """Test the System class"""
-    with utils.mock_systems(systems.app, [sys1]):
+    with utils.mock_systems(systems.app, [sys1, sys2]):
         with systems.app.app_context():
-            s, = systems.get_all_systems()
+            s, s2 = systems.get_all_systems()
         assert s.name == 'sys1'
         assert s.repo == 'repo1'
         assert s.title == 'sys1 title'
@@ -43,6 +44,8 @@ def test_system_class():
         assert s.pdbdev_accessions == ['PDBDEV_00000001']
         assert s.module_prereqs == ['imp', 'modeller', 'python/scikit']
         assert s.conda_prereqs == ['imp', 'modeller', 'scikit-learn']
+        assert s.readme == u'foobar'
+        assert s2.readme == ''
 
 
 def test_summary_all_tags():
