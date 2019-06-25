@@ -28,7 +28,7 @@ sys2.add_build('develop', 2, imp_date="2019-06-15", imp_version=None,
 sys2.add_build('develop', 3, imp_date="2019-07-15", imp_version=None,
                imp_githash="4a", retcode=1, url='url3', use_modeller=False,
                imp_build_type='release')
-sys3 = utils.MockSystem(name="sys3", repo="repo3", title="sys3 title",
+sys3 = utils.MockSystem(name="fly_genome", repo="repo3", title="sys3 title",
                         pmid="5679", prereqs=["modeller", "python/scikit"],
                         description="sys3 desc", homepage="sys3 home",
                         tags=["foo", "bar"],
@@ -72,3 +72,5 @@ def test_system_class():
             assert s2.pmid is None
             assert s2.pubmed_title is None
             assert s3.pubmed_title == 'Smith J, Jones A et al. Nature 99, 2014'
+            assert (s3.homepage
+                    == 'https://integrativemodeling.org/systems/?sys=22')
