@@ -15,3 +15,5 @@ install::
 	cp static/images/*.png ${WEBTOP}/static/images/
 	echo "import sys; sys.path.insert(0, '${WEBTOP}')" > ${WEBTOP}/systems.wsgi
 	echo "from systems import app as application" >> ${WEBTOP}/systems.wsgi
+	@echo "Do not edit files in this directory!" > ${WEBTOP}/README
+	@echo "Edit the originals and use 'make' to install them here" >> ${WEBTOP}/README
