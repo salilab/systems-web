@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block pagetitle %}500 Internal Server Error{% endblock %}
+{% block title %}<h1>An unexpected error has occurred</h1>{% endblock %}
+
+{% block body %}
+  <p>The administrator has been notified. Sorry for the inconvenience!</p>
+
+  <p><a href="{{ url_for('summary') }}">Back</a></p>
+<p>
+{% endblock %}

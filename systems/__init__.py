@@ -256,6 +256,11 @@ def timeformat_filter(t):
     return "%d days" % t
 
 
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('500.html'), 500
+
+
 @app.route('/')
 def summary():
     only_tag = request.args.get('tag')
