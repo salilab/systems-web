@@ -108,7 +108,3 @@ def list_systems():
     return app.response_class(
         json.dumps([make_dict(s) for s in get_all_systems()]),
         mimetype='application/json')
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
