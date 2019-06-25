@@ -32,20 +32,21 @@ def test_system_class():
     with utils.mock_systems(systems.app, [sys1, sys2]):
         with systems.app.app_context():
             s, s2 = systems.get_all_systems()
-        assert s.name == 'sys1'
-        assert s.repo == 'repo1'
-        assert s.title == 'sys1 title'
-        assert s.pmid == '1234'
-        assert s.description == 'sys1 desc'
-        assert s.homepage == 'sys1 home'
-        assert s.tags == ["foo", "bar"]
-        assert s.pubmed_title == 'Smith J. Nature 99, 2014'
-        assert s.accessions == ['PDBDEV_00000001', 'foo']
-        assert s.pdbdev_accessions == ['PDBDEV_00000001']
-        assert s.module_prereqs == ['imp', 'modeller', 'python/scikit']
-        assert s.conda_prereqs == ['imp', 'modeller', 'scikit-learn']
-        assert s.readme == u'foobar'
-        assert s2.readme == ''
+        for i in range(2):  # 2nd run should hit cache in most cases
+            assert s.name == 'sys1'
+            assert s.repo == 'repo1'
+            assert s.title == 'sys1 title'
+            assert s.pmid == '1234'
+            assert s.description == 'sys1 desc'
+            assert s.homepage == 'sys1 home'
+            assert s.tags == ["foo", "bar"]
+            assert s.pubmed_title == 'Smith J. Nature 99, 2014'
+            assert s.accessions == ['PDBDEV_00000001', 'foo']
+            assert s.pdbdev_accessions == ['PDBDEV_00000001']
+            assert s.module_prereqs == ['imp', 'modeller', 'python/scikit']
+            assert s.conda_prereqs == ['imp', 'modeller', 'scikit-learn']
+            assert s.readme == u'foobar'
+            assert s2.readme == ''
 
 
 def test_summary_all_tags():
