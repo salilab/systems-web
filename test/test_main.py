@@ -117,8 +117,35 @@ def test_build_ok():
         assert 'has been verified to work with:' in rv.data
 
 
+def test_unknown_build():
+    """Test the build information page with an unknown system/build"""
+    with utils.mock_systems(systems.app, [sys1, sys2]):
+        c = systems.app.test_client()
+        rv = c.get('/1/build/100')
+        assert rv.status_code == 404
+        rv = c.get('/100/build/1')
+        assert rv.status_code == 404
+
+
 def test_system():
     """Test the system information page"""
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/1')
+
+
+def test_unknown_system():
+    """Test the system information page given an unknown system ID"""
+    with utils.mock_systems(systems.app, [sys1]):
+        c = systems.app.test_client()
+        rv = c.get('/100')
+        assert rv.status_code == 404
+
+
+def test_timeformat_filter():
+    """Test the timeformat filter"""
+    with systems.app.app_context():
+        assert systems.timeformat_filter(50) == "50 seconds"
+        assert systems.timeformat_filter(2110) == "35 minutes"
+        assert systems.timeformat_filter(18030) == "5 hours"
+        assert systems.timeformat_filter(2592000) == "30 days"
