@@ -1,6 +1,5 @@
+Makefile.include
 .cache
-instance
 .coverage
-*.wsgi
 *.pyc
 __pycache__
