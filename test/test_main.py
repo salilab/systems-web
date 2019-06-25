@@ -27,6 +27,16 @@ sys2.add_build('develop', 3, imp_date="2019-07-15", imp_version=None,
                imp_githash="4a", retcode=1)
 
 
+def test_test_class():
+    """Test the Test class"""
+    with systems.app.app_context():
+        t = systems.Test(name='foo', retcode=42, stderr='bar', runtime=99)
+        assert t.name == 'foo'
+        assert t.retcode == 42
+        assert t.stderr == 'bar'
+        assert t.runtime == 99
+
+
 def test_system_class():
     """Test the System class"""
     with utils.mock_systems(systems.app, [sys1, sys2]):
