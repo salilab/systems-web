@@ -1,0 +1,28 @@
+/* Style markdown from github */
+.octicon-link {
+    display: none;
+}
+
+p code, li code {
+    background-color: #F7F7F7;
+    border-radius: 2px;
+    padding: 2px;
+}
+
+code .markdown-pre {
+    padding: 5px;
+    background-color: #F7F7F7;
+    border: 1px dashed #666;
+    overflow: auto;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.markdown-body pre {
+    padding: 5px;
+    background-color: #F7F7F7;
+    border: 1px dashed #666;
+    overflow: auto;
+    font-size: 13px;
+    line-height: 1;
+}

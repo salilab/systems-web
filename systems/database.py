@@ -148,7 +148,7 @@ class System(object):
             # Workaround broken repo info
             if self.name == 'fly_genome':
                 j['homepage'] = \
-                    'https://integrativemodeling.org/systems/?sys=22'
+                    'https://integrativemodeling.org/systems/22'
             self._github_internal = j
         return self._github_internal
 

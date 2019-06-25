@@ -40,8 +40,8 @@ def test_summary_all_tags():
         assert '<a class="tag" href="?tag=foo">foo</a>' in rv.data
         assert '<a class="tag" href="?tag=bar">bar</a>' in rv.data
         assert '<a class="tag" href="?tag=baz">baz</a>' in rv.data
-        assert ('<img src="//integrativemodeling.org/systems/sys2/thumb.png"'
-                in rv.data)
+        assert ('<img src="//integrativemodeling.org/systems/info/'
+                'sys2/thumb.png"' in rv.data)
 
 
 def test_summary_only_tags():

@@ -8,7 +8,7 @@
   {%- if system.has_thumbnail() %}
   <div class="thumb">
     <a href="{{ system.homepage }}">
-      <img src="//integrativemodeling.org/systems/{{ system.name }}/thumb.png"
+      <img src="//integrativemodeling.org/systems/info/{{ system.name }}/thumb.png"
        alt="thumbnail">
     </a>
   </div>
@@ -80,7 +80,7 @@ manual</a> for information on adding a new system to this page.</p>
 {% if develop_systems|length > 0 %}
 <p>
   <img class="buildstat"
-   src="//integrativemodeling.org/systems/images/warning.png" alt="warning">
+   src="{{ url_for("static", filename="images/warning.png") }}" alt="warning">
   The following systems are still under development and have not yet
   been tested against the public release of IMP:
 </p>

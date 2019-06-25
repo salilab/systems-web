@@ -28,7 +28,7 @@
   {% if system.pmid %}
   <a class="pubmed" title="{{ system.pubmed_title }}"
    href="https://www.ncbi.nlm.nih.gov/pubmed/{{ system.pmid }}"><img
-   src="//integrativemodeling.org/systems/images/pubmed.png"
+   src="{{ url_for("static", filename="images/pubmed.png") }}"
    alt="PubMed logo"></a>
   {% endif %}
   {%- if system.pdbdev_accessions %}
