@@ -28,6 +28,14 @@ sys2.add_build('develop', 2, imp_date="2019-06-15", imp_version=None,
 sys2.add_build('develop', 3, imp_date="2019-07-15", imp_version=None,
                imp_githash="4a", retcode=1, url='url3', use_modeller=False,
                imp_build_type='release')
+sys3 = utils.MockSystem(name="sys3", repo="repo3", title="sys3 title",
+                        pmid="5679", prereqs=["modeller", "python/scikit"],
+                        description="sys3 desc", homepage="sys3 home",
+                        tags=["foo", "bar"],
+                        authors=["Smith J", "Jones A", "Jones B"],
+                        journal="Nature", volume="99", pubdate="2014 Dec",
+                        accessions=['PDBDEV_00000001', 'foo'],
+                        github_url='ghurl', github_branch='ghbranch')
 
 
 def test_test_class():
@@ -43,9 +51,9 @@ def test_test_class():
 
 def test_system_class():
     """Test the System class"""
-    with utils.mock_systems(systems.app, [sys1, sys2]):
+    with utils.mock_systems(systems.app, [sys1, sys2, sys3]):
         with systems.app.app_context():
-            s, s2 = systems.get_all_systems()
+            s, s2, s3 = systems.get_all_systems()
         for i in range(2):  # 2nd run should hit cache in most cases
             assert s.name == 'sys1'
             assert s.repo == 'repo1'
@@ -63,3 +71,4 @@ def test_system_class():
             assert s2.readme == ''
             assert s2.pmid is None
             assert s2.pubmed_title is None
+            assert s3.pubmed_title == 'Smith J, Jones A et al. Nature 99, 2014'
