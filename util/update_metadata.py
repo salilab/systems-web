@@ -178,7 +178,10 @@ class FileUpdater(object):
     def update_metadata(self, name, contents):
         meta = yaml.load(contents)
         if 'pmid' in meta:
-            response = urllib2.urlopen('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&rettype=abstract&id=%s' % str(meta['pmid'])).read()
+            url = ('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi'
+                   '?db=pubmed&retmode=json&rettype=abstract&id=%s'
+                   % str(meta['pmid']))
+            response = urllib2.urlopen(url).read()
             # Make sure it is valid JSON:
             dummy = json.loads(response)
             fname = self.get_filename(name, 'pubmed.json')
