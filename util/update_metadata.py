@@ -51,8 +51,8 @@ class GitHubRepo(object):
     def get_default_headers(self):
         """Get headers needed for every API request"""
         headers = {'Authorization':
-                   'Basic %s' % base64.b64encode(self.auth['username'] + ":"
-                                                 + self.auth['password'])}
+                   'Basic %s' % base64.b64encode(self.auth['username'] + ":" +
+                                                 self.auth['password'])}
         return headers
 
     def get_readme(self):
