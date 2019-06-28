@@ -158,6 +158,7 @@ def test_badge_bad():
         rv = c.get('/0/badge.svg?branch=foo')
         assert rv.status_code == 400
 
+
 def test_badge_old():
     """Test redirect for old badge URL"""
     with utils.mock_systems(systems.app, [sys2]):
