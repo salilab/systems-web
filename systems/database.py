@@ -159,9 +159,10 @@ class System(object):
 
     @property
     def description(self):
-        d = str(Markup.escape(self._github['description']))
+        # Make sure any existing HTML tags are escaped
+        d = unicode(Markup.escape(self._github['description']))
         # Fix markup of FRET_R and mark as safe for Jinja
-        return Markup(d.replace('FRETR', 'FRET<sub>R</sub>'))
+        return Markup(d.replace(u'FRETR', u'FRET<sub>R</sub>'))
 
     pmid = property(lambda self: self._metadata.get('pmid'))
     title = property(lambda self: self._metadata['title'])
