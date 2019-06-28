@@ -4,7 +4,7 @@ import json
 import yaml
 import operator
 import itertools
-from flask import g
+from flask import g, Markup
 from .prerequisites import ALL_PREREQS
 from .app import app
 
@@ -157,11 +157,16 @@ class System(object):
         thumb = os.path.join(app.config['SYSTEM_TOP'], self.name, 'thumb.png')
         return os.path.exists(thumb)
 
+    @property
+    def description(self):
+        d = str(Markup.escape(self._github['description']))
+        # Fix markup of FRET_R and mark as safe for Jinja
+        return Markup(d.replace('FRETR', 'FRET<sub>R</sub>'))
+
     pmid = property(lambda self: self._metadata.get('pmid'))
     title = property(lambda self: self._metadata['title'])
     tags = property(lambda self: self._metadata.get('tags', []))
     homepage = property(lambda self: self._github['homepage'])
-    description = property(lambda self: self._github['description'])
     accessions = property(lambda self: self._metadata.get('accessions', []))
     pdbdev_accessions = property(lambda self: [x for x in self.accessions
                                                if x.startswith('PDBDEV')])
