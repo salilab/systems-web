@@ -2,7 +2,7 @@ import json
 import operator
 import itertools
 import logging.handlers
-from flask import Flask, g, render_template, request, abort
+from flask import Flask, g, render_template, request, abort, redirect, url_for
 from .database import get_all_systems, add_all_build_results, ALL_BRANCHES
 from .app import app
 
@@ -34,6 +34,13 @@ def internal_error(error):
 
 @app.route('/')
 def summary():
+    # Permament (301) redirect to new badge URL
+    sysstat = request.args.get('sysstat')
+    branch = request.args.get('branch')
+    if sysstat and branch:
+        return redirect(url_for('badge', system_id=sysstat, branch=branch),
+                        code=301)
+
     only_tag = request.args.get('tag')
     all_sys = get_all_systems()
     tags = frozenset(itertools.chain.from_iterable(s.tags for s in all_sys))
@@ -97,6 +104,29 @@ def build_by_id(system_id, build_id):
     tests = results[0].get_tests()
     return render_template('build.html', system=all_sys[0], result=results[0],
                            tests=tests)
+
+
+@app.route('/<int:system_id>/badge.svg')
+def badge(system_id):
+    branch = request.args.get('branch')
+    if branch not in ALL_BRANCHES:
+        abort(400)
+    all_sys = get_all_systems(system_id)
+    add_all_build_results(all_sys)
+    if not all_sys:
+        abort(404)
+    branch_labels = {'master': 'stable release',
+                     'develop': 'nightly build'}
+    url = "https://img.shields.io/badge/%s-" % branch_labels[branch]
+    passes = [r for r in all_sys[0].build_results[branch] if r.passed]
+    if passes:
+        build = passes[-1].build
+        txt = build.imp_version or str(build.imp_date)
+        txt = txt.replace("/", "%2F").replace('-', '--')
+        url += "%s-brightgreen.svg" % txt
+    else:
+        url += "never-red.svg"
+    return redirect(url, code=302)
 
 
 @app.route('/api/list')

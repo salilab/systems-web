@@ -128,3 +128,40 @@ def test_500():
         rv = c.get('/')
         assert 'An unexpected error has occurred' in rv.data
         assert rv.status_code == 500
+
+
+def test_badge_ok():
+    """Test badge for an OK build"""
+    with utils.mock_systems(systems.app, [sys2]):
+        c = systems.app.test_client()
+        rv = c.get('/0/badge.svg?branch=master')
+        assert 'stable release-2.11.0-brightgreen.svg' in rv.data
+        assert rv.status_code == 302
+
+
+def test_badge_failed():
+    """Test badge for a failed build"""
+    with utils.mock_systems(systems.app, [sys1]):
+        c = systems.app.test_client()
+        rv = c.get('/0/badge.svg?branch=develop')
+        assert 'nightly build-never-red.svg' in rv.data
+        assert rv.status_code == 302
+
+
+def test_badge_bad():
+    """Test badges for bad system or branch"""
+    with utils.mock_systems(systems.app, [sys1]):
+        c = systems.app.test_client()
+        rv = c.get('/9/badge.svg?branch=develop')
+        assert rv.status_code == 404
+
+        rv = c.get('/0/badge.svg?branch=foo')
+        assert rv.status_code == 400
+
+def test_badge_old():
+    """Test redirect for old badge URL"""
+    with utils.mock_systems(systems.app, [sys2]):
+        c = systems.app.test_client()
+        rv = c.get('/?sysstat=0&branch=master')
+        assert '"/0/badge.svg?branch=master"' in rv.data
+        assert rv.status_code == 301
