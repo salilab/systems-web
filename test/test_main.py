@@ -62,7 +62,8 @@ def test_all_builds():
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/all-builds')
-        assert b'<a class="buildbox build_fail" title="Build failed"' in rv.data
+        assert (b'<a class="buildbox build_fail" title="Build failed"'
+                in rv.data)
         assert b'<a class="buildbox build_ok" title="Build OK"' in rv.data
 
 
