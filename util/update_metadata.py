@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 """
 Update metadata stored on the local disk, used by the systems page,
@@ -24,7 +24,7 @@ information; and "system_top" is the filesystem location where the metadata
 will be stored.
 """
 
-import urllib2
+import urllib.request
 import base64
 import json
 import os
@@ -50,9 +50,9 @@ class GitHubRepo(object):
 
     def get_default_headers(self):
         """Get headers needed for every API request"""
+        auth = self.auth['username'] + ":" + self.auth['password']
         headers = {'Authorization':
-                   'Basic %s' % base64.b64encode(self.auth['username'] + ":" +
-                                                 self.auth['password'])}
+                   'Basic %s' % base64.b64encode(auth.encode())}
         return headers
 
     def get_readme(self):
@@ -65,12 +65,13 @@ class GitHubRepo(object):
         headers = self.get_default_headers()
         headers['Accept'] = 'application/vnd.github.VERSION.html'
         try:
-            req = urllib2.Request(self.api_root + '/readme', None, headers)
-            response = urllib2.urlopen(req)
+            req = urllib.request.Request(self.api_root + '/readme',
+                                         None, headers)
+            response = urllib.request.urlopen(req)
             urls_fixed = re.subn('<a href="([^"]+)">', make_url_absolute,
                                  response.read())
             return urls_fixed[0]
-        except urllib2.HTTPError as exc:
+        except urllib.error.HTTPError as exc:
             if exc.code == 404:
                 return ''
             else:
@@ -81,10 +82,11 @@ class GitHubRepo(object):
            since last time."""
         headers = self.get_default_headers()
         headers['If-Modified-Since'] = last_modified
-        req = urllib2.Request(self.api_root + '/commits/HEAD', None, headers)
+        req = urllib.request.Request(self.api_root + '/commits/HEAD',
+                                     None, headers)
         try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError as exc:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as exc:
             if exc.code == 304:
                 return None
             else:
@@ -98,10 +100,10 @@ class GitHubRepo(object):
         headers = self.get_default_headers()
         if last_modified:
             headers['If-Modified-Since'] = last_modified
-        req = urllib2.Request(self.api_root, None, headers)
+        req = urllib.request.Request(self.api_root, None, headers)
         try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError as exc:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as exc:
             if exc.code == 304:
                 if last_modified:
                     # There may have been a more recent push even though the
@@ -118,11 +120,11 @@ class GitHubRepo(object):
 
     def get_file(self, filename):
         headers = self.get_default_headers()
-        req = urllib2.Request(self.api_root + '/contents/' + filename,
-                              None, headers)
+        req = urllib.request.Request(self.api_root + '/contents/' + filename,
+                                     None, headers)
         try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError as exc:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as exc:
             if exc.code == 404:
                 return None
             else:
@@ -181,7 +183,7 @@ class FileUpdater(object):
             url = ('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi'
                    '?db=pubmed&retmode=json&rettype=abstract&id=%s'
                    % str(meta['pmid']))
-            response = urllib2.urlopen(url).read()
+            response = urllib.request.urlopen(url).read()
             # Make sure it is valid JSON:
             dummy = json.loads(response)
             fname = self.get_filename(name, 'pubmed.json')
