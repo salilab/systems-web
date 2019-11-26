@@ -20,8 +20,8 @@ class Tests(object):
             c = systems.app.test_client()
             rv = c.get('/api/list')
             # Should be a JSON string listing all systems
-            assert '"homepage": "sys1 home"' in rv.data
-            assert ('"conda_prereqs": ["imp", "modeller", "scikit-learn"]'
+            assert b'"homepage": "sys1 home"' in rv.data
+            assert (b'"conda_prereqs": ["imp", "modeller", "scikit-learn"]'
                     in rv.data)
             j = json.loads(rv.data)
             assert len(j) == 1

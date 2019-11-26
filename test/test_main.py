@@ -35,13 +35,13 @@ def test_summary_all_tags():
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/')
-        assert '<a class="sysmore" href="sys1 home">[more...]</a>' in rv.data
-        assert '<a class="sysmore" href="sys2 home">[more...]</a>' in rv.data
-        assert '<a class="tag" href="?tag=foo">foo</a>' in rv.data
-        assert '<a class="tag" href="?tag=bar">bar</a>' in rv.data
-        assert '<a class="tag" href="?tag=baz">baz</a>' in rv.data
-        assert ('<img src="//integrativemodeling.org/systems/info/'
-                'sys2/thumb.png"' in rv.data)
+        assert b'<a class="sysmore" href="sys1 home">[more...]</a>' in rv.data
+        assert b'<a class="sysmore" href="sys2 home">[more...]</a>' in rv.data
+        assert b'<a class="tag" href="?tag=foo">foo</a>' in rv.data
+        assert b'<a class="tag" href="?tag=bar">bar</a>' in rv.data
+        assert b'<a class="tag" href="?tag=baz">baz</a>' in rv.data
+        assert (b'<img src="//integrativemodeling.org/systems/info/'
+                b'sys2/thumb.png"' in rv.data)
 
 
 def test_summary_only_tags():
@@ -49,12 +49,12 @@ def test_summary_only_tags():
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/?tag=bar')
-        assert '<a class="sysmore" href="sys1 home">[more...]</a>' in rv.data
-        assert ('<a class="sysmore" href="sys2 home">[more...]</a>'
+        assert b'<a class="sysmore" href="sys1 home">[more...]</a>' in rv.data
+        assert (b'<a class="sysmore" href="sys2 home">[more...]</a>'
                 not in rv.data)
-        assert '<a class="tag" href="?tag=foo">foo</a>' in rv.data
-        assert '<a class="tag" href="?tag=bar">bar</a>' in rv.data
-        assert '<a class="tag" href="?tag=baz">baz</a>' in rv.data
+        assert b'<a class="tag" href="?tag=foo">foo</a>' in rv.data
+        assert b'<a class="tag" href="?tag=bar">bar</a>' in rv.data
+        assert b'<a class="tag" href="?tag=baz">baz</a>' in rv.data
 
 
 def test_all_builds():
@@ -62,8 +62,8 @@ def test_all_builds():
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/all-builds')
-        assert '<a class="buildbox build_fail" title="Build failed"' in rv.data
-        assert '<a class="buildbox build_ok" title="Build OK"' in rv.data
+        assert b'<a class="buildbox build_fail" title="Build failed"' in rv.data
+        assert b'<a class="buildbox build_ok" title="Build OK"' in rv.data
 
 
 def test_build_failed():
@@ -71,7 +71,7 @@ def test_build_failed():
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/1/build/3')
-        assert ('was tested but <span class="build_fail">does not work'
+        assert (b'was tested but <span class="build_fail">does not work'
                 in rv.data)
 
 
@@ -80,7 +80,7 @@ def test_build_ok():
     with utils.mock_systems(systems.app, [sys1, sys2]):
         c = systems.app.test_client()
         rv = c.get('/1/build/1')
-        assert 'has been verified to work with:' in rv.data
+        assert b'has been verified to work with:' in rv.data
 
 
 def test_unknown_build():
@@ -126,7 +126,7 @@ def test_500():
         # Don't throw an exception but instead return a 500 HTTP response
         systems.app.testing = False
         rv = c.get('/')
-        assert 'An unexpected error has occurred' in rv.data
+        assert b'An unexpected error has occurred' in rv.data
         assert rv.status_code == 500
 
 
@@ -135,7 +135,7 @@ def test_badge_ok():
     with utils.mock_systems(systems.app, [sys2]):
         c = systems.app.test_client()
         rv = c.get('/0/badge.svg?branch=master')
-        assert 'stable release-2.11.0-brightgreen.svg' in rv.data
+        assert b'stable release-2.11.0-brightgreen.svg' in rv.data
         assert rv.status_code == 302
 
 
@@ -144,7 +144,7 @@ def test_badge_failed():
     with utils.mock_systems(systems.app, [sys1]):
         c = systems.app.test_client()
         rv = c.get('/0/badge.svg?branch=develop')
-        assert 'nightly build-never-red.svg' in rv.data
+        assert b'nightly build-never-red.svg' in rv.data
         assert rv.status_code == 302
 
 
@@ -164,5 +164,5 @@ def test_badge_old():
     with utils.mock_systems(systems.app, [sys2]):
         c = systems.app.test_client()
         rv = c.get('/?sysstat=0&branch=master')
-        assert '"/0/badge.svg?branch=master"' in rv.data
+        assert b'"/0/badge.svg?branch=master"' in rv.data
         assert rv.status_code == 301

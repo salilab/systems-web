@@ -1,6 +1,7 @@
 import MySQLdb
 import os
 import json
+import sys
 import yaml
 import operator
 import itertools
@@ -160,7 +161,9 @@ class System(object):
     @property
     def description(self):
         # Make sure any existing HTML tags are escaped
-        d = unicode(Markup.escape(self._github['description']))
+        d = Markup.escape(self._github['description'])
+        if sys.version_info[0] < 3:
+            d = unicode(d)
         # Fix markup of FRET_R and mark as safe for Jinja
         return Markup(d.replace(u'FRETR', u'FRET<sub>R</sub>'))
 
