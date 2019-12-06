@@ -69,7 +69,7 @@ class GitHubRepo(object):
                                          None, headers)
             response = urllib.request.urlopen(req)
             urls_fixed = re.subn('<a href="([^"]+)">', make_url_absolute,
-                                 response.read())
+                                 response.read().decode('utf-8'))
             return urls_fixed[0]
         except urllib.error.HTTPError as exc:
             if exc.code == 404:
