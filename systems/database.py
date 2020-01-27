@@ -96,6 +96,8 @@ class System(object):
                                 'metadata.yaml')
             with open(meta) as fh:
                 self._metadata_internal = yaml.safe_load(fh)
+                if self._metadata_internal is None:
+                    raise ValueError("Empty metadata for %s" % self.name)
         return self._metadata_internal
 
     @property
