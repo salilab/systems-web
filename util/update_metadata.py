@@ -131,7 +131,7 @@ class GitHubRepo(object):
                 raise
         contents = json.load(response)
         if contents['encoding'] == 'base64':
-            return base64.b64decode(contents['content'])
+            return base64.b64decode(contents['content']).decode()
         else:
             raise ValueError("Unknown encoding: %s" % contents['encoding'])
 
@@ -185,9 +185,9 @@ class FileUpdater(object):
                    % str(meta['pmid']))
             response = urllib.request.urlopen(url).read()
             # Make sure it is valid JSON:
-            dummy = json.loads(response)
+            j = json.loads(response)
             fname = self.get_filename(name, 'pubmed.json')
-            self.write_file(fname, response)
+            self.write_file(fname, json.dumps(j))
 
 
 class DatabaseConnection(object):
