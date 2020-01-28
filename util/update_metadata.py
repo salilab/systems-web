@@ -118,7 +118,7 @@ class GitHubRepo(object):
                 raise
         return response.read(), response.info()['Last-Modified']
 
-    def get_file(self, filename):
+    def get_file(self, filename, binary=False):
         headers = self.get_default_headers()
         req = urllib.request.Request(self.api_root + '/contents/' + filename,
                                      None, headers)
@@ -131,7 +131,10 @@ class GitHubRepo(object):
                 raise
         contents = json.load(response)
         if contents['encoding'] == 'base64':
-            return base64.b64decode(contents['content']).decode()
+            contents = base64.b64decode(contents['content'])
+            if not binary:
+                contents = contents.decode()
+            return contents
         else:
             raise ValueError("Unknown encoding: %s" % contents['encoding'])
 
@@ -146,10 +149,11 @@ class FileUpdater(object):
         except IOError:
             return None
 
-    def write_file(self, fname, contents):
+    def write_file(self, fname, contents, binary=False):
         if not os.path.exists(os.path.dirname(fname)):
             os.mkdir(os.path.dirname(fname))
-        open(fname, 'w').write(contents)
+        with open(fname, 'wb' if binary else 'w') as fh:
+            fh.write(contents)
 
     def get_filename(self, name, filename):
         return os.path.join(self.root, name, filename)
@@ -169,13 +173,13 @@ class FileUpdater(object):
 
         self.write_file(g_json, json.dumps(info))
         self.write_file(self.get_filename(name, 'readme.html'), g.get_readme())
-        for f in ['metadata.yaml', 'thumb.png']:
+        for f, binary in (('metadata.yaml', False), ('thumb.png', True)):
             fname = self.get_filename(name, f)
-            contents = g.get_file('metadata/' + f)
+            contents = g.get_file('metadata/' + f, binary)
             if contents is not None:
                 if f == 'metadata.yaml':
                     self.update_metadata(name, contents)
-                self.write_file(fname, contents)
+                self.write_file(fname, contents, binary)
 
     def update_metadata(self, name, contents):
         meta = yaml.load(contents)
