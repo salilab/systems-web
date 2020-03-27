@@ -33,7 +33,7 @@
   {% endif %}
   {%- if system.pdbdev_accessions %}
   <a class="pdb_dev" title="This structure is deposited in the PDB-Dev database with accession code{{ 's' if system.pdbdev_accessions|length > 1 }} {{ system.pdbdev_accessions|join(", ") }}"
-   href="https://pdb-dev.wwpdb.org/">PDB-Dev</a>
+   href="https://pdb-dev.wwpdb.org/entry.html?{{ system.pdbdev_accessions[0] }}">PDB-Dev</a>
   {% endif %}
 {% endmacro %}
 
