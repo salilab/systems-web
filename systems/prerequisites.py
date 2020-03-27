@@ -1,7 +1,10 @@
 class Prerequisite(object):
-    def __init__(self, name, url, conda_package, salilab_channel=False):
+    def __init__(self, name, url, conda_package, salilab_channel=False,
+                 python2_only=False):
         self.name, self.url, self.conda_package = name, url, conda_package
         self.salilab_channel = salilab_channel
+        self.python2_only = python2_only
+        self.module_name = None  # filled in later
 
 
 ALL_PREREQS = {
@@ -18,7 +21,7 @@ ALL_PREREQS = {
     'python/scipy': Prerequisite('scipy', 'https://www.scipy.org/', 'scipy'),
     'python/protobuf': Prerequisite('protobuf',
                                     'https://github.com/google/protobuf',
-                                    'protobuf'),
+                                    'protobuf', python2_only=True),
     'python/biopython': Prerequisite('biopython', 'http://biopython.org/',
                                      'biopython'),
     'python/pyparsing': Prerequisite(
@@ -32,3 +35,7 @@ ALL_PREREQS = {
                              None, salilab_channel=True),
     'gcc': Prerequisite('gcc', 'https://gcc.gnu.org/', None)
 }
+
+# Module name is the prereq key
+for module_name, prereq in ALL_PREREQS.items():
+    prereq.module_name = module_name
