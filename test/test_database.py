@@ -36,6 +36,14 @@ sys3 = utils.MockSystem(name="fly_genome", repo="repo3", title="sys3 title",
                         journal="Nature", volume="99", pubdate="2014 Dec",
                         accessions=['PDBDEV_00000001', 'foo'],
                         github_url='ghurl', github_branch='ghbranch')
+sys4 = utils.MockSystem(name="sys4", repo="repo4", title="sys4 title",
+                        pmid="5679", prereqs=["modeller", "python/protobuf"],
+                        description="sys4 desc", homepage="sys4 home",
+                        tags=["foo", "bar"],
+                        authors=["Smith J", "Jones A", "Jones B"],
+                        journal="Nature", volume="99", pubdate="2014 Dec",
+                        accessions=['PDBDEV_00000001', 'foo'],
+                        github_url='ghurl', github_branch='ghbranch')
 
 
 def test_test_class():
@@ -51,9 +59,9 @@ def test_test_class():
 
 def test_system_class():
     """Test the System class"""
-    with utils.mock_systems(systems.app, [sys1, sys2, sys3]):
+    with utils.mock_systems(systems.app, [sys1, sys2, sys3, sys4]):
         with systems.app.app_context():
-            s, s2, s3 = systems.get_all_systems()
+            s, s2, s3, s4 = systems.get_all_systems()
         for i in range(2):  # 2nd run should hit cache in most cases
             assert s.name == 'sys1'
             assert s.repo == 'repo1'
@@ -65,7 +73,7 @@ def test_system_class():
             assert s.pubmed_title == 'Smith J. Nature 99, 2014'
             assert s.accessions == ['PDBDEV_00000001', 'foo']
             assert s.pdbdev_accessions == ['PDBDEV_00000001']
-            assert s.module_prereqs == ['imp', 'modeller', 'python/scikit']
+            assert s.module_prereqs == ['imp', 'modeller', 'python3/scikit']
             assert s.conda_prereqs == ['imp', 'modeller', 'scikit-learn']
             assert s.readme == u'foobar'
             assert s2.readme == ''
@@ -73,3 +81,8 @@ def test_system_class():
             assert s2.pubmed_title is None
             assert s3.pubmed_title == 'Smith J, Jones A et al. Nature 99, 2014'
             assert s3.homepage == 'https://integrativemodeling.org/systems/22'
+            # fly_genome system must use Python 2
+            assert s3.name == "fly_genome"
+            assert s3.module_prereqs == ['imp', 'modeller', 'python2/scikit']
+            # protobuf must use Python 2
+            assert s4.module_prereqs == ['imp', 'modeller', 'python2/protobuf']
