@@ -57,8 +57,10 @@
     <tt>conda install {{ system.conda_prereqs|join(' ') }}</tt>
 
     <p><img src="//integrativemodeling.org/images/ucsf.png" alt="UCSF logo">
-    To set up the environment on the UCSF QB3 cluster to run this system, run:
+    To set up the environment on the UCSF Wynton cluster to run
+    this system, run:
     </p>
+    <tt>module load Sali</tt><br>
     <tt>module load {{ system.module_prereqs|join(' ') }}</tt>
   </div>
 
