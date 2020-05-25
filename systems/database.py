@@ -94,7 +94,7 @@ class System(object):
         if not hasattr(self, '_metadata_internal'):
             meta = os.path.join(app.config['SYSTEM_TOP'], self.name,
                                 'metadata.yaml')
-            with open(meta) as fh:
+            with open(meta, encoding='utf-8') as fh:
                 self._metadata_internal = yaml.safe_load(fh)
                 if self._metadata_internal is None:
                     raise ValueError("Empty metadata for %s" % self.name)
@@ -118,7 +118,7 @@ class System(object):
             pubmed = os.path.join(app.config['SYSTEM_TOP'], self.name,
                                   'pubmed.json')
             if os.path.exists(pubmed):
-                with open(pubmed) as fh:
+                with open(pubmed, encoding='utf-8') as fh:
                     self._pubmed_internal = json.load(fh)
             else:
                 self._pubmed_internal = None
@@ -146,7 +146,7 @@ class System(object):
         if not hasattr(self, '_github_internal'):
             gh = os.path.join(app.config['SYSTEM_TOP'], self.name,
                               'github.json')
-            with open(gh) as fh:
+            with open(gh, encoding='utf-8') as fh:
                 j = json.load(fh)
             # Workaround broken repo info
             if self.name == 'fly_genome':
