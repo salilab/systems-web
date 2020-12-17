@@ -1,8 +1,7 @@
 import json
 import operator
 import itertools
-import logging.handlers
-from flask import Flask, g, render_template, request, abort, redirect, url_for
+from flask import g, render_template, request, abort, redirect, url_for
 from .database import get_all_systems, add_all_build_results, ALL_BRANCHES
 from .app import app
 
@@ -67,7 +66,6 @@ def all_builds():
     all_builds = {}
     for branch in ALL_BRANCHES:
         builds_by_id = {}
-        results_by_id = {}
         for system in all_sys:
             for result in system.build_results[branch]:
                 builds_by_id[result.build.id] = result.build

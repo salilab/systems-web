@@ -29,7 +29,6 @@ import base64
 import json
 import os
 import re
-import sys
 import MySQLdb
 import yaml
 
@@ -37,7 +36,7 @@ import yaml
 class GitHubRepo(object):
     def __init__(self, repo, auth):
         self.auth = auth
-        m = re.match('https://github\.com/([^/]+)/([^/]+)', repo)
+        m = re.match(r'https://github\.com/([^/]+)/([^/]+)', repo)
         if not m:
             raise ValueError("Could not parse repo %s" % repo)
         self.owner = m.group(1)

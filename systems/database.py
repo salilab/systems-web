@@ -3,8 +3,6 @@ import os
 import json
 import sys
 import yaml
-import operator
-import itertools
 from flask import g, Markup
 from .prerequisites import ALL_PREREQS
 from .app import app
@@ -189,8 +187,8 @@ class System(object):
         reqs = self.prereqs
         # Use Python 2 only for systems that don't work with Python 3 or
         # that use Python-2-only modules
-        if (self.name in ('fly_genome', 'saxsmerge_benchmark') or
-                any(p.python2_only for p in reqs)):
+        if (self.name in ('fly_genome', 'saxsmerge_benchmark')
+                or any(p.python2_only for p in reqs)):
             return [p.module_name.replace('python/', 'python2/') for p in reqs]
         else:
             return [p.module_name.replace('python/', 'python3/') for p in reqs]

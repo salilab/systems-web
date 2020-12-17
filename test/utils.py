@@ -11,6 +11,8 @@ import json
 # Make reading flask config a noop
 def _mock_from_pyfile(self, fname, silent=False):
     pass
+
+
 flask.Config.from_pyfile = _mock_from_pyfile
 
 
@@ -74,7 +76,7 @@ class MockSystem(object):
 
     def make_thumbnail(self, fname):
         if self.has_thumbnail:
-            with open(fname, 'w') as fh:
+            with open(fname, 'w'):
                 pass  # dummy empty image
 
     def make_readme(self, fname):
