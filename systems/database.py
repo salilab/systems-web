@@ -1,7 +1,6 @@
 import MySQLdb
 import os
 import json
-import sys
 import yaml
 from flask import g, Markup
 from .prerequisites import ALL_PREREQS
@@ -162,8 +161,6 @@ class System(object):
     def description(self):
         # Make sure any existing HTML tags are escaped
         d = Markup.escape(self._github['description'])
-        if sys.version_info[0] < 3:
-            d = unicode(d)
         # Fix markup of FRET_R and mark as safe for Jinja
         return Markup(d.replace(u'FRETR', u'FRET<sub>R</sub>'))
 
