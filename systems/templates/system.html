@@ -22,8 +22,8 @@
       <a class="download" href="{{ system.github_url }}/archive/{{ system.github_branch }}.zip"><img class="download" src="{{ url_for("static", filename="images/download.png") }}" alt="Download">Download files</a>
     </div>
     <div class="downloadstat">
-      {%- if results['master'] and results['master'].passed %}
-      <img class="buildstat" src="{{ url_for("static", filename="images/tick.png") }}" alt="tick"><i>Verified to work with the <a href="//integrativemodeling.org/download.html#stable">latest stable IMP release ({{ results['master'].build.imp_version }})</a>.</i>
+      {%- if results['main'] and results['main'].passed %}
+      <img class="buildstat" src="{{ url_for("static", filename="images/tick.png") }}" alt="tick"><i>Verified to work with the <a href="//integrativemodeling.org/download.html#stable">latest stable IMP release ({{ results['main'].build.imp_version }})</a>.</i>
       {%- elif results['develop'] and results['develop'].passed %}
       <img class="buildstat" src="{{ url_for("static", filename="images/warning.png") }}" alt="warning">These files work <b>only</b> with a <a href="//integrativemodeling.org/download.html#develop">nightly build of IMP</a> on or after {{ results['develop'].build.imp_date }}, not the stable release.</i>
       {%- else %}

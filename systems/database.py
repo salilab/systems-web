@@ -7,7 +7,7 @@ from .prerequisites import ALL_PREREQS
 from .app import app
 
 
-ALL_BRANCHES = ['master', 'develop']
+ALL_BRANCHES = ['main', 'develop']
 
 
 def connect_db():

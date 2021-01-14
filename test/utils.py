@@ -39,7 +39,7 @@ class MockSystem(object):
         self.has_thumbnail = has_thumbnail
         self.github_url, self.github_branch = github_url, github_branch
         self.readme = readme
-        self.builds = {'master': [], 'develop': []}
+        self.builds = {'main': [], 'develop': []}
 
     def add_build(self, branch, build_id, imp_date, imp_version,
                   imp_githash, retcode, url, use_modeller, imp_build_type):

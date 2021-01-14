@@ -41,8 +41,8 @@ class GitHubRepo(object):
             raise ValueError("Could not parse repo %s" % repo)
         self.owner = m.group(1)
         self.repo = m.group(2)
-        # Note: this assumes that the master branch is the default
-        self.url_root = 'https://github.com/%s/%s/tree/master/' \
+        # Note: this assumes that the main branch is the default
+        self.url_root = 'https://github.com/%s/%s/tree/main/' \
                         % (self.owner, self.repo)
         self.api_root = 'https://api.github.com/repos/%s/%s' \
                         % (self.owner, self.repo)

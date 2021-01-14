@@ -19,7 +19,7 @@ sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
                         journal="Nature", volume="99", pubdate="2014 Dec",
                         accessions=[], has_thumbnail=True,
                         github_url='ghurl', github_branch='ghbranch')
-sys2.add_build('master', 1, imp_date="2019-06-15", imp_version="2.11.0",
+sys2.add_build('main', 1, imp_date="2019-06-15", imp_version="2.11.0",
                imp_githash="2a", retcode=0, url='url1', use_modeller=True,
                imp_build_type='fast')
 sys2.add_build('develop', 2, imp_date="2019-06-15", imp_version=None,

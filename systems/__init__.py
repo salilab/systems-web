@@ -37,6 +37,9 @@ def summary():
     sysstat = request.args.get('sysstat')
     branch = request.args.get('branch')
     if sysstat and branch:
+        # Handle legacy 'master' branch
+        if branch == 'master':
+            branch = 'main'
         return redirect(url_for('badge', system_id=sysstat, branch=branch),
                         code=301)
 
@@ -107,13 +110,16 @@ def build_by_id(system_id, build_id):
 @app.route('/<int:system_id>/badge.svg')
 def badge(system_id):
     branch = request.args.get('branch')
+    # Handle legacy 'master' branch
+    if branch == 'master':
+        branch = 'main'
     if branch not in ALL_BRANCHES:
         abort(400)
     all_sys = get_all_systems(system_id)
     add_all_build_results(all_sys)
     if not all_sys:
         abort(404)
-    branch_labels = {'master': 'stable release',
+    branch_labels = {'main': 'stable release',
                      'develop': 'nightly build'}
     url = "https://img.shields.io/badge/%s-" % branch_labels[branch]
     passes = [r for r in all_sys[0].build_results[branch] if r.passed]

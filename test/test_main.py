@@ -19,7 +19,7 @@ sys2 = utils.MockSystem(name="sys2", repo="repo2", title="sys2 title",
                         journal="Nature", volume="99", pubdate="2014 Dec",
                         accessions=[], has_thumbnail=True,
                         github_url='ghurl', github_branch='ghbranch')
-sys2.add_build('master', 1, imp_date="2019-06-15", imp_version="2.11.0",
+sys2.add_build('main', 1, imp_date="2019-06-15", imp_version="2.11.0",
                imp_githash="2a", retcode=0, url='url1', use_modeller=True,
                imp_build_type='fast')
 sys2.add_build('develop', 2, imp_date="2019-06-15", imp_version=None,
@@ -135,6 +135,15 @@ def test_badge_ok():
     """Test badge for an OK build"""
     with utils.mock_systems(systems.app, [sys2]):
         c = systems.app.test_client()
+        rv = c.get('/0/badge.svg?branch=main')
+        assert b'stable release-2.11.0-brightgreen.svg' in rv.data
+        assert rv.status_code == 302
+
+
+def test_badge_ok_master():
+    """Test badge for an OK build using legacy 'master' branch"""
+    with utils.mock_systems(systems.app, [sys2]):
+        c = systems.app.test_client()
         rv = c.get('/0/badge.svg?branch=master')
         assert b'stable release-2.11.0-brightgreen.svg' in rv.data
         assert rv.status_code == 302
@@ -164,6 +173,15 @@ def test_badge_old():
     """Test redirect for old badge URL"""
     with utils.mock_systems(systems.app, [sys2]):
         c = systems.app.test_client()
+        rv = c.get('/?sysstat=0&branch=main')
+        assert b'"/0/badge.svg?branch=main"' in rv.data
+        assert rv.status_code == 301
+
+
+def test_badge_old_master():
+    """Test redirect for old badge URL using legacy 'master' branch"""
+    with utils.mock_systems(systems.app, [sys2]):
+        c = systems.app.test_client()
         rv = c.get('/?sysstat=0&branch=master')
-        assert b'"/0/badge.svg?branch=master"' in rv.data
+        assert b'"/0/badge.svg?branch=main"' in rv.data
         assert rv.status_code == 301
