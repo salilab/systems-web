@@ -1,5 +1,5 @@
-[![Build Status](https://github.com/salilab/systems-web/workflows/build/badge.svg?branch=master)](https://github.com/salilab/systems-web/actions?query=workflow%3Abuild)
-[![codecov](https://codecov.io/gh/salilab/systems-web/branch/master/graph/badge.svg)](https://codecov.io/gh/salilab/systems-web)
+[![Build Status](https://github.com/salilab/systems-web/workflows/build/badge.svg?branch=main)](https://github.com/salilab/systems-web/actions?query=workflow%3Abuild)
+[![codecov](https://codecov.io/gh/salilab/systems-web/branch/main/graph/badge.svg)](https://codecov.io/gh/salilab/systems-web)
 
 This is a simple [Flask](http://flask.pocoo.org/) application to manage
 the list of applications of [IMP](https://integrativemodeling.org/) to
