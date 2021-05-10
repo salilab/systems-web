@@ -30,6 +30,8 @@ ALL_PREREQS = {
         'pyparsing'),
     'python/argparse': Prerequisite(
         'argparse', 'https://pypi.python.org/pypi/argparse', 'argparse'),
+    'python/pandas': Prerequisite(
+        'pandas', 'https://pypi.python.org/pypi/pandas', 'pandas'),
     'allosmod': Prerequisite('allosmod',
                              'https://github.com/salilab/allosmod-lib',
                              None, salilab_channel=True),
