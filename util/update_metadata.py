@@ -27,10 +27,10 @@ will be stored.
 import urllib.request
 import base64
 import json
-import os
 import re
 import MySQLdb
 import yaml
+from pathlib import Path
 
 
 class GitHubRepo(object):
@@ -149,13 +149,13 @@ class FileUpdater(object):
             return None
 
     def write_file(self, fname, contents, binary=False):
-        if not os.path.exists(os.path.dirname(fname)):
-            os.mkdir(os.path.dirname(fname))
+        if not fname.parent.exists():
+            fname.parent.mkdir()
         with open(fname, 'wb' if binary else 'w') as fh:
             fh.write(contents)
 
     def get_filename(self, name, filename):
-        return os.path.join(self.root, name, filename)
+        return self.root / name / filename
 
     def update(self, name, repo):
         g = GitHubRepo(repo, self.auth)
@@ -208,14 +208,14 @@ class DatabaseConnection(object):
 
 def read_config():
     """Read configuration from same directory as script"""
-    fname = os.path.join(os.path.dirname(__file__), "config.json")
+    fname = Path(__file__).parent / "config.json"
     with open(fname) as fh:
         return json.load(fh)
 
 
 def main():
     config = read_config()
-    u = FileUpdater(root=config['system_top'], auth=config['github'])
+    u = FileUpdater(root=Path(config['system_top']), auth=config['github'])
     d = DatabaseConnection(config['sql'])
     for s in d.get_systems():
         u.update(name=s['name'], repo=s['repo'])
