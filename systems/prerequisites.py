@@ -22,6 +22,11 @@ ALL_PREREQS = {
     'python/protobuf': Prerequisite('protobuf',
                                     'https://github.com/google/protobuf',
                                     'protobuf', python2_only=True),
+    'python/networkx': Prerequisite('networkx', 'https://networkx.org/',
+                                    'networkx'),
+    'python/hdbscan': Prerequisite(
+        'hdbscan', 'https://github.com/scikit-learn-contrib/hdbscan',
+        'hdbscan'),
     'python/biopython': Prerequisite('biopython', 'http://biopython.org/',
                                      'biopython'),
     'python/pyparsing': Prerequisite(
