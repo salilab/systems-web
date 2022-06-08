@@ -13,11 +13,11 @@ ALL_PREREQS = {
     'modeller': Prerequisite('MODELLER', 'https://salilab.org/modeller/',
                              'modeller', salilab_channel=True),
     'python/scikit': Prerequisite('scikit-learn',
-                                  'http://scikit-learn.org/stable/',
+                                  'https://scikit-learn.org/stable/',
                                   'scikit-learn'),
-    'python/matplotlib': Prerequisite('matplotlib', 'http://matplotlib.org/',
+    'python/matplotlib': Prerequisite('matplotlib', 'https://matplotlib.org/',
                                       'matplotlib'),
-    'python/numpy': Prerequisite('numpy', 'http://www.numpy.org/', 'numpy'),
+    'python/numpy': Prerequisite('numpy', 'https://numpy.org/', 'numpy'),
     'python/scipy': Prerequisite('scipy', 'https://www.scipy.org/', 'scipy'),
     'python/protobuf': Prerequisite('protobuf',
                                     'https://github.com/google/protobuf',
@@ -27,7 +27,7 @@ ALL_PREREQS = {
     'python/hdbscan': Prerequisite(
         'hdbscan', 'https://github.com/scikit-learn-contrib/hdbscan',
         'hdbscan'),
-    'python/biopython': Prerequisite('biopython', 'http://biopython.org/',
+    'python/biopython': Prerequisite('biopython', 'https://biopython.org/',
                                      'biopython'),
     'python/pyparsing': Prerequisite(
         'pyparsing',
