@@ -134,6 +134,11 @@ class GitHubRepo(object):
             if not binary:
                 contents = contents.decode()
             return contents
+        elif contents['encoding'] == 'none' and contents['content'] == '':
+            req = urllib.request.Request(
+                contents['download_url'], None, headers)
+            response = urllib.request.urlopen(req)
+            return response.read()
         else:
             raise ValueError("Unknown encoding: %s" % contents['encoding'])
 
