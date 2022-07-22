@@ -168,7 +168,8 @@ class System(object):
     title = property(lambda self: self._metadata['title'])
     tags = property(lambda self: self._metadata.get('tags', []))
     homepage = property(lambda self: self._github['homepage'])
-    accessions = property(lambda self: self._metadata.get('accessions', []))
+    accessions = property(
+        lambda self: self._metadata.get('accessions') or [])
     pdbdev_accessions = property(lambda self: [x for x in self.accessions
                                                if x.startswith('PDBDEV')])
     github_url = property(lambda self: self._github['html_url'])
