@@ -186,7 +186,7 @@ class FileUpdater(object):
                 self.write_file(fname, contents, binary)
 
     def update_metadata(self, name, contents):
-        meta = yaml.load(contents)
+        meta = yaml.safe_load(contents)
         if 'pmid' in meta:
             url = ('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi'
                    '?db=pubmed&retmode=json&rettype=abstract&id=%s'
