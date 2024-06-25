@@ -4,7 +4,8 @@ include Makefile.include
 .PHONY: test install
 
 test:
-	pytest --flake8
+	pytest
+	flake8 --ignore=E402,W503 .
 
 install::
 	mkdir -p ${WEBTOP}/systems/templates
