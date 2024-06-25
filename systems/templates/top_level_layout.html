@@ -5,7 +5,7 @@
   <ul>
     <li {{ 'class="thispage"'|safe if top_level == 'summary' }}><a href="{{ url_for("summary") }}">Summary</a></li>
     <li {{ 'class="thispage"'|safe if top_level == 'all_builds' }}><a href="{{ url_for("all_builds") }}">All builds</a></li>
-    <li><a href="https://github.com/salilab/systems-web/tree/main/systems"><i class="fab fa-github"></i> Edit on GitHub</a></li>
+    <li><a href="https://github.com/salilab/systems-web/tree/main"><i class="fab fa-github"></i> Edit on GitHub</a></li>
   </ul>
 </div>
 {% endblock %}
