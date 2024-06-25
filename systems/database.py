@@ -2,7 +2,8 @@ import MySQLdb
 import os
 import json
 import yaml
-from flask import g, Markup
+from flask import g
+from markupsafe import Markup
 from .prerequisites import ALL_PREREQS
 from .app import app
 
