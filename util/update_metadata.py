@@ -33,7 +33,7 @@ import yaml
 from pathlib import Path
 
 
-class GitHubRepo(object):
+class GitHubRepo:
     def __init__(self, repo, auth):
         self.auth = auth
         m = re.match(r'https://github\.com/([^/]+)/([^/]+)', repo)
@@ -143,7 +143,7 @@ class GitHubRepo(object):
             raise ValueError("Unknown encoding: %s" % contents['encoding'])
 
 
-class FileUpdater(object):
+class FileUpdater:
     def __init__(self, root, auth):
         self.root, self.auth = root, auth
 
@@ -198,7 +198,7 @@ class FileUpdater(object):
             self.write_file(fname, json.dumps(j))
 
 
-class DatabaseConnection(object):
+class DatabaseConnection:
     def __init__(self, sql):
         self.conn = self.connect_mysql(sql)
 
