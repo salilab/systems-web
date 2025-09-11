@@ -11,14 +11,13 @@ To use, make a file config.json in the same directory as this script, readable
 only by the user, of the format:
 
 {
- "github": {"username": "XXX"
-            "password": "XXX"},
+ "github": {"password": "XXX"},
  "sql": {"passwd": "XXX", "host": "XXX",
          "db": "XXX", "user": "XXX"},
  "system_top": "XXX"
 }
 
-where "github" gives the username and password for access to the GitHub API;
+where "github" gives the personal access token for access to the GitHub API;
 "sql" contains connection parameters to the MySQL database with systems
 information; and "system_top" is the filesystem location where the metadata
 will be stored.
@@ -49,9 +48,7 @@ class GitHubRepo:
 
     def get_default_headers(self):
         """Get headers needed for every API request"""
-        auth = self.auth['username'] + ":" + self.auth['password']
-        headers = {'Authorization':
-                   'Basic %s' % base64.b64encode(auth.encode())}
+        headers = {'Authorization': 'Bearer ' + self.auth['password']}
         return headers
 
     def get_readme(self):
