@@ -72,7 +72,7 @@ def test_system_class():
             assert s.tags == ["foo", "bar"]
             assert s.pubmed_title == 'Smith J. Nature 99, 2014'
             assert s.accessions == ['PDBDEV_00000001', 'foo']
-            assert s.pdbdev_accessions == ['PDBDEV_00000001']
+            assert s.pdb_ihm_accessions == ['PDBDEV_00000001']
             assert s.module_prereqs == ['imp', 'modeller', 'python3/scikit']
             assert s.conda_prereqs == ['imp', 'modeller', 'scikit-learn']
             assert s.readme == u'foobar'

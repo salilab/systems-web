@@ -31,9 +31,9 @@
    src="{{ url_for("static", filename="images/pubmed.png") }}"
    alt="PubMed logo"></a>
   {% endif %}
-  {%- if system.pdbdev_accessions %}
-  <a class="pdb_dev" title="This structure is deposited in the PDB-Dev database with accession code{{ 's' if system.pdbdev_accessions|length > 1 }} {{ system.pdbdev_accessions|join(", ") }}"
-   href="https://pdb-dev.wwpdb.org/entry.html?{{ system.pdbdev_accessions[0] }}">PDB-Dev</a>
+  {%- if system.pdb_ihm_accessions %}
+  <a class="pdb_ihm" title="This structure is deposited in the PDB-IHM database with accession code{{ 's' if system.pdb_ihm_accessions|length > 1 }} {{ system.pdb_ihm_accessions|join(", ") }}"
+   href="https://pdb-ihm.org/entry.html?{{ system.pdb_ihm_accessions[0] }}">PDB-IHM</a>
   {% endif %}
 {% endmacro %}
 

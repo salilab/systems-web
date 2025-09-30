@@ -171,8 +171,10 @@ class System(object):
     homepage = property(lambda self: self._github['homepage'])
     accessions = property(
         lambda self: self._metadata.get('accessions') or [])
-    pdbdev_accessions = property(lambda self: [x for x in self.accessions
-                                               if x.startswith('PDBDEV')])
+    pdb_ihm_accessions = property(
+        lambda self: [x for x in self.accessions
+                      if x.startswith('PDBDEV') or x.startswith('8')
+                      or x.startswith('9')])
     github_url = property(lambda self: self._github['html_url'])
     github_branch = property(lambda self: self._github['default_branch'])
 
