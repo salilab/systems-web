@@ -17,9 +17,9 @@ biological systems at https://integrativemodeling.org/systems/.
      MySQL server.
    - `SYSTEM_TOP`: directory containing metadata for each system (this is
      populated by the `util/update_metadata.py` script).
-   - `MAIL_SERVER`, `MAIL_PORT`, `ADMINS`: host and port to connect to to
-     send emails when the application encounters an error, and a Python
-     list of users to notify.
+   - `MAIL_SERVER`, `MAIL_PORT`, `FROM_ADDR`, `ADMINS`: host and port to
+     connect to to send emails when the application encounters an error, the
+     address emails should come from, and a Python list of users to notify.
 
 ## Apache setup
 
