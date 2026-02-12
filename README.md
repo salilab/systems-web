@@ -5,6 +5,9 @@ This is a simple [Flask](http://flask.pocoo.org/) application to manage
 the list of applications of [IMP](https://integrativemodeling.org/) to
 biological systems at https://integrativemodeling.org/systems/.
 
+For the scripts that run IMP to collect data for the website, see
+https://github.com/salilab/systems-tests/.
+
 ## Configuration
 
 1. Create a file `Makefile.include` in the same directory as `Makefile` that
