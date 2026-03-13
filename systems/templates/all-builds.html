@@ -37,7 +37,6 @@
   </thead>
 
   <tbody>
-  </tbody>
   {% for build in builds %}
     <tr>
       <td class="builddate" title="">{{ get_build_text(build) }}</td>
@@ -46,6 +45,7 @@
     {% endfor %}
     </tr>
   {% endfor %}
+  </tbody>
   </table>
 </div>
 {% endfor %}
