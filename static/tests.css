@@ -322,7 +322,7 @@ div.last_build {
 }
 
 span.build_fail {
-  color: red;
+  color: #ec0000;
 }
 
 div.branch_summary {
